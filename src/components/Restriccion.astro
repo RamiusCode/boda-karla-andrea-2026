@@ -1,0 +1,190 @@
+---
+// src/components/Restriccion.astro
+// Aviso de solo adultos en rosa gold: título en Great Vibes y el mensaje,
+// en una tarjeta clara con esquinas, igual a la de la despedida.
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Solo Adultos";
+const mensaje =
+    "Gracias por acompañarnos y compartir esta noche tan especial. Con mucho cariño, los esperamos para celebrar este hermoso momento";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="restriccion" class="relative w-full overflow-hidden">
+    <!-- Brillos sueltos en oro rosado -->
+    <span class="chispa chispa-1" aria-hidden="true"></span>
+    <span class="chispa chispa-2" aria-hidden="true"></span>
+
+    <div
+        id="bloque-restriccion"
+        class="relative flex flex-col items-center px-6 py-10 text-center"
+    >
+        <div class="card-restriccion">
+            <span class="esquina esquina-si" aria-hidden="true"></span>
+            <span class="esquina esquina-sd" aria-hidden="true"></span>
+            <span class="esquina esquina-ii" aria-hidden="true"></span>
+            <span class="esquina esquina-id" aria-hidden="true"></span>
+
+            <h2 class="font-great-vibes titulo-restriccion">{titulo}</h2>
+
+            <img
+                src="/imagenes/separador.png"
+                alt=""
+                width="1920"
+                height="198"
+                aria-hidden="true"
+                loading="lazy"
+                class="separador-restriccion select-none"
+            />
+
+            <p class="mensaje-restriccion">{mensaje}</p>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Los cqw de abajo se miden contra el ancho del bloque */
+    #bloque-restriccion {
+        container-type: inline-size;
+        max-width: 430px;
+        margin: 0 auto;
+    }
+
+    /* ── Tarjeta ────────────────────────────────────────────── */
+    .card-restriccion {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8cqw 7cqw 9cqw;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow:
+            0 10px 28px rgba(150, 80, 70, 0.14),
+            inset 0 0 0 1px rgba(183, 110, 121, 0.3);
+    }
+
+    /* Esquinas en L, un poco hacia afuera de la tarjeta */
+    .esquina {
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        border-color: #b76e79;
+        border-style: solid;
+        border-width: 0;
+    }
+
+    .esquina-si {
+        top: -6px;
+        left: -6px;
+        border-top-width: 2px;
+        border-left-width: 2px;
+        border-top-left-radius: 14px;
+    }
+    .esquina-sd {
+        top: -6px;
+        right: -6px;
+        border-top-width: 2px;
+        border-right-width: 2px;
+        border-top-right-radius: 14px;
+    }
+    .esquina-ii {
+        bottom: -6px;
+        left: -6px;
+        border-bottom-width: 2px;
+        border-left-width: 2px;
+        border-bottom-left-radius: 14px;
+    }
+    .esquina-id {
+        bottom: -6px;
+        right: -6px;
+        border-bottom-width: 2px;
+        border-right-width: 2px;
+        border-bottom-right-radius: 14px;
+    }
+
+    /* Great Vibes: sin mayúsculas forzadas ni espaciado. Mismo tamaño
+       que el título de vestimenta */
+    .titulo-restriccion {
+        color: #c0905a;
+        font-size: min(12.5cqw, 3.1rem);
+        line-height: 1.25;
+    }
+
+    .separador-restriccion {
+        width: 55cqw;
+        height: auto;
+        margin-top: 1cqw;
+    }
+
+    /* Mismo texto que los párrafos de la despedida */
+    .mensaje-restriccion {
+        margin-top: 5cqw;
+        font-family: "Charm", cursive;
+        font-size: 1.25rem;
+        line-height: 1.75;
+        color: #9a6a5e;
+        text-wrap: pretty;
+    }
+
+    /* ── Chispas ────────────────────────────────────────────── */
+    .chispa {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 9999px;
+        background: #f3c9b8;
+        box-shadow: 0 0 6px 1px rgba(214, 150, 125, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        animation: brillo 4.2s ease-in-out infinite;
+    }
+
+    .chispa-1 {
+        left: 5%;
+        top: 18%;
+        animation-delay: 0.8s;
+    }
+    .chispa-2 {
+        right: 5%;
+        bottom: 20%;
+        animation-delay: 2.4s;
+    }
+
+    @keyframes brillo {
+        0%,
+        100% {
+            opacity: 0;
+            transform: scale(0.6);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .chispa {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    import { animarEntrada } from "../scripts/animaciones";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const bloque = document.getElementById("bloque-restriccion");
+        if (!bloque) return;
+
+        // La tarjeta entra entera; adentro, título, separador y mensaje
+        const card = bloque.querySelector(".card-restriccion");
+        if (!card) return;
+
+        animarEntrada(card, bloque);
+        const piezas = Array.from(card.children).filter(
+            (el) => !el.classList.contains("esquina"),
+        );
+        animarEntrada(piezas, bloque, { stagger: 0.12, delay: 0.15 });
+    });
+</script>
