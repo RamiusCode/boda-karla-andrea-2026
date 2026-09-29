@@ -1,0 +1,611 @@
+---
+// src/components/Portada.astro — Portada rosa y oro rosado.
+//
+// De arriba hacia abajo, igual que el diseño de referencia:
+//   principal.webp → fondo con flores; se ESTIRA al alto del celular
+//   corona.png     → tiara
+//   "Has recibido una invitación" → serif en oro rosado
+//   separador.png  → filete con corazón (el único)
+//   "muy especial" → Great Vibes en oro rosado
+//
+// El nombre y los XV años no van acá a propósito: los muestra
+// NombresFlores al abrir el sobre, y repetirlos se sentía redundante.
+//   sobre.png      → el sobre lacrado; es el botón que arranca la música
+//                    y abre la invitación
+//   "Toca el sobre…" → cápsula blanca debajo del sobre
+//
+// Todo se mide en cqw / cqh (ancho y alto de la columna), así en un
+// celular chico entra entero y en uno largo se reparte el espacio.
+//
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const lineaArriba = "Has recibido";
+const lineaMedio = "una invitación";
+const destacado = "muy especial";
+// ──────────────────────────────────────────────────────────────
+
+// El nombre del invitado llega por prop desde las invitaciones
+// personalizadas; si va vacío, el renglón "Para:" no se dibuja.
+export interface Props {
+    invitado?: string;
+}
+const { invitado = "" } = Astro.props;
+---
+
+<!-- CAPA BLANCA DE TRANSICIÓN — tapa el fondo del layout durante el fade -->
+<div
+    id="capa-blanca"
+    style="
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    z-index: 8499;
+    opacity: 1;
+    pointer-events: none;
+"
+>
+</div>
+
+<!--
+   La portada va por debajo del botón flotante de música (z 9000) para que
+   el control siga accesible mientras la portada se desvanece.
+-->
+<section
+    class="fixed inset-0 w-full h-screen flex justify-center z-[8500]"
+    id="portada-section"
+    style="background-color: #f7e4df;"
+>
+    <!-- Columna móvil: el diseño nunca se estira a lo ancho en tablet / PC -->
+    <div class="columna-portada relative w-full max-w-[430px] h-full overflow-hidden">
+        <!-- Brillos sueltos en oro rosado -->
+        <span class="chispa chispa-1" aria-hidden="true"></span>
+        <span class="chispa chispa-2" aria-hidden="true"></span>
+        <span class="chispa chispa-3" aria-hidden="true"></span>
+        <span class="chispa chispa-4" aria-hidden="true"></span>
+
+        <!--
+           Mariposas en los huecos libres: a los costados, entre el título
+           y el sobre, y abajo a los lados de la cápsula. Nunca encima del
+           texto. El span lleva el recorrido y la imagen el aleteo.
+        -->
+        {
+            [1, 2, 3, 4].map((n) => (
+                <span class={`mariposa mariposa-${n}`} aria-hidden="true">
+                    <img
+                        src="/imagenes/mariposa.webp"
+                        alt=""
+                        width="360"
+                        height="240"
+                        class="mariposa-alas select-none"
+                    />
+                </span>
+            ))
+        }
+
+        <div class="contenido-portada">
+            <!-- Encabezado: corona · título · nombre -->
+            <div id="bloque-titulo" class="flex flex-col items-center text-center">
+                <img
+                    src="/imagenes/corona.png"
+                    alt=""
+                    width="1055"
+                    height="527"
+                    aria-hidden="true"
+                    class="corona select-none"
+                />
+
+                <h1 class="titulo-xv">
+                    <span class="titulo-mis">{lineaArriba}</span>
+                    <span class="titulo-anios">{lineaMedio}</span>
+                </h1>
+
+                <img
+                    src="/imagenes/separador.png"
+                    alt=""
+                    width="1920"
+                    height="198"
+                    aria-hidden="true"
+                    class="separador select-none"
+                />
+
+                <p class="nombre-xv font-great-vibes">{destacado}</p>
+
+                {
+                    invitado && (
+                        <p class="linea-invitado">
+                            Para: <span class="nombre-invitado">{invitado}</span>
+                        </p>
+                    )
+                }
+            </div>
+
+            <!-- El sobre y su cápsula van juntos: la cápsula es la
+                 indicación del sobre, no un bloque aparte -->
+            <div class="bloque-sobre">
+            <!-- El sobre = botón de ingreso -->
+            <button
+                id="btn-ingresar"
+                type="button"
+                aria-label="Abrir la invitación"
+                class="cursor-pointer border-0 bg-transparent p-0"
+            >
+                <img
+                    src="/imagenes/sobre.png"
+                    alt=""
+                    width="1469"
+                    height="844"
+                    class="sobre select-none"
+                />
+            </button>
+
+            <p id="texto-clic" class="texto-clic">
+                <span class="clic-corazon" aria-hidden="true">♡</span>
+                Toca el sobre para abrir
+            </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    body.portada-activa {
+        overflow: hidden !important;
+        height: 100vh !important;
+    }
+
+    /* La capa blanca tapa el fondo del layout siempre */
+    #capa-blanca {
+        transition: opacity 0.4s ease;
+    }
+
+    /* ── Columna ────────────────────────────────────────────── */
+    /* El fondo se estira a lo alto (100% 100%): en un celular largo
+       las flores siguen en las cuatro esquinas, no se recortan. */
+    .columna-portada {
+        container-type: size;
+        background-color: #f7e4df;
+        background-image: url("/imagenes/principal.webp");
+        background-size: 100% 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .contenido-portada {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* Título y sobre juntos, con una separación fija, y el conjunto
+           centrado a lo alto: en un celular largo el aire sobrante se va
+           arriba y abajo, no entre "muy especial" y el sobre */
+        justify-content: center;
+        gap: 4.5cqh;
+        padding: 3cqh 6cqw 4cqh;
+    }
+
+    /* ── Encabezado ─────────────────────────────────────────── */
+    .corona {
+        width: min(40cqw, 20cqh);
+        height: auto;
+        /* Aire entre la corona y el título */
+        margin-bottom: 2.4cqh;
+        filter: drop-shadow(0 4px 8px rgba(150, 90, 70, 0.18));
+    }
+
+    .separador {
+        width: min(74cqw, 42cqh);
+        height: auto;
+        margin: 1.8cqh 0 1.2cqh;
+        opacity: 0.95;
+    }
+
+    /* Oro rosado liso, sin degradé */
+    .titulo-xv,
+    .nombre-xv {
+        color: #b76e79;
+        text-shadow: 0 1px 2px rgba(120, 60, 60, 0.12);
+    }
+
+    .titulo-xv {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 400;
+        line-height: 1;
+        display: flex;
+        flex-direction: column;
+        /* Aire entre "Has recibido" y "una invitación" */
+        gap: 1.2cqh;
+        align-items: center;
+    }
+
+    .titulo-mis {
+        font-size: min(8.5cqw, 4.4cqh);
+        font-style: italic;
+        font-weight: 300;
+    }
+
+    .titulo-anios {
+        font-size: min(10.5cqw, 5.4cqh);
+        white-space: nowrap;
+        letter-spacing: 0.04em;
+    }
+
+    .nombre-xv {
+        font-size: min(15.5cqw, 8cqh);
+        line-height: 1.25;
+    }
+
+    .linea-invitado {
+        font-family: "Cormorant Garamond", serif;
+        color: #9a5c48;
+        font-size: min(4.2cqw, 2.3cqh);
+        letter-spacing: 0.08em;
+        margin-top: 0.4cqh;
+    }
+
+    .nombre-invitado {
+        font-weight: 600;
+    }
+
+    /* ── Sobre ──────────────────────────────────────────────── */
+    .sobre {
+        display: block;
+        width: min(84cqw, 46cqh);
+        height: auto;
+        filter: drop-shadow(0 12px 18px rgba(140, 80, 65, 0.28));
+    }
+
+    /* ── "Toca el sobre…" ─────────────────────────────────────── */
+    /* Cápsula blanca con borde rosa gold: se lee sobre las flores */
+    .bloque-sobre {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3cqh;
+    }
+
+    .texto-clic {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45em;
+        padding: 0.45em 1.3em;
+        border: 1px solid rgba(183, 110, 121, 0.55);
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 4px 14px rgba(150, 80, 80, 0.18);
+        font-family: "Cormorant Garamond", serif;
+        font-size: min(4.8cqw, 2.5cqh);
+        font-style: italic;
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: 0.03em;
+        color: #a85e6a;
+        white-space: nowrap;
+    }
+
+    .clic-corazon {
+        font-style: normal;
+        font-size: 0.85em;
+        line-height: 1;
+    }
+
+    /* ── Chispas ────────────────────────────────────────────── */
+    .chispa {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 9999px;
+        background: #f3c9b8;
+        box-shadow: 0 0 6px 1px rgba(214, 150, 125, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        animation: brillo 4.2s ease-in-out infinite;
+    }
+
+    .chispa-1 {
+        left: 14%;
+        top: 38%;
+        animation-delay: 0.2s;
+    }
+    .chispa-2 {
+        right: 12%;
+        top: 30%;
+        animation-delay: 1.4s;
+    }
+    .chispa-3 {
+        left: 10%;
+        top: 62%;
+        animation-delay: 2.6s;
+    }
+    .chispa-4 {
+        right: 14%;
+        top: 58%;
+        animation-delay: 3.4s;
+    }
+
+    @keyframes brillo {
+        0%,
+        100% {
+            opacity: 0;
+            transform: scale(0.6);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* ── Mariposas ──────────────────────────────────────────── */
+    /* Cada una con su lugar, tamaño y recorrido (--dx, --dy). Las de la
+       izquierda miran a la derecha y al revés: todas miran al centro.
+       Van por encima del contenido (z 3) pero en huecos sin texto. */
+    .mariposa {
+        position: absolute;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0;
+        animation: vuelo var(--t, 9s) ease-in-out infinite;
+        animation-delay: var(--d, 0s);
+    }
+
+    .mariposa-alas {
+        display: block;
+        width: 100%;
+        height: auto;
+        transform: rotate(var(--r, 0deg));
+        filter: drop-shadow(0 4px 6px rgba(150, 80, 70, 0.25));
+        animation: aleteo var(--a, 0.35s) ease-in-out infinite alternate;
+    }
+
+    /* Costado izquierdo, entre el título y el sobre */
+    .mariposa-1 {
+        left: 5%;
+        top: 44%;
+        width: min(11cqw, 6cqh);
+        --dx: 16px;
+        --dy: 20px;
+        --r: 38deg;
+        --t: 9s;
+    }
+    /* Costado derecho, a la altura de "muy especial" */
+    .mariposa-2 {
+        right: 5%;
+        top: 34%;
+        width: min(9cqw, 5cqh);
+        --dx: -16px;
+        --dy: 18px;
+        --r: -40deg;
+        --t: 10s;
+        --d: -3s;
+        --a: 0.4s;
+    }
+    /* Abajo a la izquierda, al costado de la cápsula */
+    .mariposa-3 {
+        left: 8%;
+        top: 86%;
+        width: min(8cqw, 4.5cqh);
+        --dx: 14px;
+        --dy: 16px;
+        --r: 32deg;
+        --t: 8s;
+        --d: -5s;
+        --a: 0.3s;
+    }
+    /* Abajo a la derecha, al costado de la cápsula */
+    .mariposa-4 {
+        right: 8%;
+        top: 90%;
+        width: min(9cqw, 5cqh);
+        --dx: -14px;
+        --dy: 16px;
+        --r: -30deg;
+        --t: 8.5s;
+        --d: -2s;
+        --a: 0.33s;
+    }
+
+    /* Recorrido: sube, se ladea y vuelve, con un vaivén suave */
+    @keyframes vuelo {
+        0%,
+        100% {
+            transform: translate(0, 0);
+        }
+        25% {
+            transform: translate(var(--dx), calc(var(--dy) * -1));
+        }
+        50% {
+            transform: translate(calc(var(--dx) * 0.3), calc(var(--dy) * -1.7));
+        }
+        75% {
+            transform: translate(calc(var(--dx) * -0.6), calc(var(--dy) * -0.7));
+        }
+    }
+
+    /* Aleteo: las alas se cierran y se abren */
+    @keyframes aleteo {
+        from {
+            transform: rotate(var(--r, 0deg)) scaleX(1);
+        }
+        to {
+            transform: rotate(var(--r, 0deg)) scaleX(0.35);
+        }
+    }
+
+    /* Quien pide menos movimiento no ve latidos */
+    @media (prefers-reduced-motion: reduce) {
+        .chispa,
+        .mariposa,
+        .mariposa-alas {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+
+    if (typeof window !== "undefined") {
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.classList.add("portada-activa");
+
+            const boton = document.getElementById("btn-ingresar");
+            const bloque = document.getElementById("bloque-titulo");
+            const textoClic = document.getElementById("texto-clic");
+            if (!boton || !bloque || !textoClic) return;
+
+            // Corona, separadores, título y nombre entran en cascada
+            const piezas = Array.from(bloque.children);
+
+            // ── Estado inicial ──────────────────────────────────────
+            gsap.set(piezas, { opacity: 0, y: 18 });
+            gsap.set(boton, { opacity: 0, y: 30, scale: 0.9 });
+            gsap.set(textoClic, { opacity: 0 });
+
+            // ── Animaciones de entrada ──────────────────────────────
+            const tl = gsap.timeline({ delay: 0.3 });
+
+            tl.to(piezas, {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                stagger: 0.12,
+                ease: "power2.out",
+            })
+                .to(
+                    boton,
+                    {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        duration: 0.9,
+                        ease: "back.out(1.4)",
+                    },
+                    "-=0.4",
+                )
+                .to(textoClic, { opacity: 1, duration: 0.6 }, "-=0.3")
+                // Las mariposas aparecen de a una. Solo opacidad: el
+                // transform ya lo usa el vuelo en CSS.
+                .to(
+                    // Solo las de la portada: otras secciones también
+                    // tienen .mariposa, con su propia animación
+                    "#portada-section .mariposa",
+                    { opacity: 1, duration: 0.9, stagger: 0.25, ease: "power1.out" },
+                    "-=0.5",
+                );
+
+            // ── Latido sutil del sobre (invita a tocarlo) ───────────
+            tl.add(() => {
+                gsap.to(boton, {
+                    scale: 1.03,
+                    duration: 1.6,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut",
+                });
+                gsap.to(textoClic, {
+                    scale: 1.06,
+                    duration: 1.2,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut",
+                });
+            });
+
+            // ── Hover ───────────────────────────────────────────────
+            // El escalado va por GSAP: el latido de arriba escribe
+            // transform inline y le ganaría a una clase de Tailwind.
+            boton.addEventListener("mouseenter", () => {
+                gsap.to(boton, {
+                    scale: 1.06,
+                    duration: 0.3,
+                    ease: "power2.out",
+                });
+            });
+            boton.addEventListener("mouseleave", () => {
+                gsap.to(boton, { scale: 1, duration: 0.3, ease: "power2.out" });
+            });
+
+            const portadaSection = document.getElementById("portada-section");
+            const capaBlanca = document.getElementById("capa-blanca");
+
+            // ── Suelta el scroll y deja la invitación arrancada en su
+            //    primera sección.
+            const abrirInvitacion = () => {
+                document.body.classList.remove("portada-activa");
+                document.body.style.overflow = "auto";
+
+                // Salto seco, no suave: la portada todavía se está
+                // desvaneciendo encima.
+                const destino = document.getElementById("arco-novios");
+                if (destino) {
+                    destino.scrollIntoView({ block: "start" });
+                } else {
+                    window.scrollTo({ top: 0 });
+                }
+            };
+
+            // ── Click en el sobre: música + salida de la portada ─────
+            boton.addEventListener("click", () => {
+                gsap.killTweensOf(boton);
+                gsap.killTweensOf(textoClic);
+
+                // El botón flotante de BotonMusica.astro aparece solo al
+                // detectar que la melodía ya está sonando.
+                const audio = new Audio("/musica/melodia2.mp3");
+                audio.loop = true;
+                audio.volume = 0.5;
+                audio.play().catch((error) => {
+                    console.log("❌ Error al reproducir audio:", error);
+                });
+                (window as any).audioGlobal = audio;
+                (window as any).estaReproduciendoGlobal = true;
+
+                gsap.timeline()
+                    // El sobre primero se hunde y después se abre y se va.
+                    .to(boton, {
+                        scale: 0.94,
+                        duration: 0.22,
+                        ease: "power2.in",
+                    })
+                    .to(boton, {
+                        scale: 1.12,
+                        opacity: 0,
+                        duration: 0.45,
+                        ease: "power2.out",
+                    })
+                    .to(textoClic, { opacity: 0, duration: 0.3 }, 0.1)
+                    .to(
+                        piezas,
+                        {
+                            opacity: 0,
+                            y: -12,
+                            duration: 0.4,
+                            stagger: 0.05,
+                            ease: "power2.in",
+                        },
+                        0.25,
+                    )
+                    .to(
+                        portadaSection,
+                        {
+                            opacity: 0,
+                            duration: 0.5,
+                            ease: "power2.in",
+                            onStart: abrirInvitacion,
+                            onComplete: () => {
+                                portadaSection?.remove();
+                                // Desvanecer la capa blanca suavemente
+                                gsap.to(capaBlanca, {
+                                    opacity: 0,
+                                    duration: 0.4,
+                                    ease: "power2.out",
+                                    onComplete: () => capaBlanca?.remove(),
+                                });
+                            },
+                        },
+                        0.75,
+                    );
+            });
+        });
+    }
+</script>

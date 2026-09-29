@@ -1,0 +1,39 @@
+---
+// src/components/Invitacion.astro
+// El cuerpo completo de la invitación, en un solo lugar.
+import Portada from "./Portada.astro";
+import NombresFlores from "./NombresFlores.astro";
+import Dedicatoria from "./Dedicatoria.astro";
+import NombresPadres from "./NombresPadres.astro";
+import Fecha from "./Fecha.astro";
+import Calendario from "./Calendario.astro";
+import Contador from "./Contador.astro";
+import RecepcionSocial from "./RecepcionSocial.astro";
+import Cronograma from "./Cronograma.astro";
+import Galeria from "./Galeria.astro";
+import CodigoVestimenta from "./CodigoVestimenta.astro";
+import Despedida from "./Despedida.astro";
+import BotonMusica from "./BotonMusica.astro";
+---
+
+<!-- PORTADA (cubre todo hasta que se toca el botón de ingreso) -->
+<Portada />
+
+<!-- CONTENIDO DE LA INVITACIÓN -->
+<div id="contenido-principal">
+    <NombresFlores />
+    <Dedicatoria />
+    <NombresPadres />
+    <Fecha />
+    <Calendario anio={2026} mes={10} dia={17} />
+    <Contador />
+
+    <RecepcionSocial />
+    <CodigoVestimenta />
+    <Cronograma />
+    <Galeria />
+    <Despedida />
+</div>
+
+<!-- Control de música flotante -->
+<BotonMusica />

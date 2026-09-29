@@ -1,0 +1,393 @@
+---
+// src/components/Contador.astro
+// Cuenta regresiva en cuatro medallones rosa gold. Cada medallón tiene
+// un aro que se va llenando (horas del día, minutos, segundos), así el
+// contador se ve "vivo" aunque los días no cambien.
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Falta poco para mi gran noche";
+const tituloLlegada = "¡Llegó el gran día!";
+// Fecha y hora de los XV
+const fechaXV = "2026-10-17T19:00:00";
+// ──────────────────────────────────────────────────────────────
+
+const NOMBRES_DIA = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+const NOMBRES_MES = [
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
+];
+
+// La línea de la fecha sale de la misma fecha que cuenta el reloj
+const f = new Date(fechaXV);
+const hh = f.getHours().toString().padStart(2, "0");
+const mm = f.getMinutes().toString().padStart(2, "0");
+const lineaFecha = `${NOMBRES_DIA[f.getDay()]} ${f.getDate()} de ${NOMBRES_MES[f.getMonth()]} · ${hh}:${mm} hrs.`;
+
+const casillas = [
+    { id: "dias", rotulo: "Días" },
+    { id: "horas", rotulo: "Horas" },
+    { id: "minutos", rotulo: "Min." },
+    { id: "segundos", rotulo: "Seg." },
+];
+
+// Largo del aro: circunferencia de r = 46 en un viewBox de 100
+const ARO = 2 * Math.PI * 46;
+---
+
+<div
+    id="contador"
+    class="contador-suelto"
+    data-fecha={fechaXV}
+    data-llegada={tituloLlegada}
+>
+    <!-- Mariposa posada sobre el título -->
+    <span class="mariposa-contador" aria-hidden="true">
+        <img
+            src="/imagenes/mariposa.webp"
+            alt=""
+            width="360"
+            height="240"
+            loading="lazy"
+            class="mariposa-alas select-none"
+        />
+    </span>
+
+    <p class="font-great-vibes titulo-contador">{titulo}</p>
+
+    <img
+        src="/imagenes/separador.png"
+        alt=""
+        width="1920"
+        height="198"
+        aria-hidden="true"
+        loading="lazy"
+        class="separador-contador select-none"
+    />
+
+    <div class="casillas-contador">
+        {
+            casillas.map((casilla) => (
+                <div class="casilla">
+                    <svg class="aro" viewBox="0 0 100 100" aria-hidden="true">
+                        <circle class="aro-fondo" cx="50" cy="50" r="46" />
+                        <circle
+                            class="aro-lleno"
+                            id={`aro-${casilla.id}`}
+                            cx="50"
+                            cy="50"
+                            r="46"
+                            stroke-dasharray={ARO}
+                            stroke-dashoffset={ARO}
+                        />
+                    </svg>
+                    <span id={casilla.id} class="numero-contador">
+                        00
+                    </span>
+                    <span class="rotulo-contador">{casilla.rotulo}</span>
+                </div>
+            ))
+        }
+    </div>
+
+    <p class="fecha-contador">
+        <span class="corazon-fecha" aria-hidden="true">♡</span>
+        {lineaFecha}
+        <span class="corazon-fecha" aria-hidden="true">♡</span>
+    </p>
+</div>
+
+<style>
+    /* Separación con el Calendario, que va arriba en Invitacion.astro */
+    .contador-suelto {
+        position: relative;
+        width: 100%;
+        max-width: 380px;
+        margin: 1.6rem auto 0;
+        padding: 0 1rem;
+        container-type: inline-size;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    /* Great Vibes: sin mayúsculas forzadas ni espaciado */
+    .titulo-contador {
+        color: #c0905a;
+        font-size: min(10cqw, 2.4rem);
+        line-height: 1.2;
+        text-wrap: balance;
+    }
+
+    .separador-contador {
+        width: 60cqw;
+        height: auto;
+        margin-top: 1.5cqw;
+    }
+
+    /* ── Mariposa ───────────────────────────────────────────── */
+    .mariposa-contador {
+        position: absolute;
+        right: 4cqw;
+        top: -7cqw;
+        width: 11cqw;
+        animation: flotar 3.4s ease-in-out infinite;
+    }
+
+    .mariposa-alas {
+        display: block;
+        width: 100%;
+        height: auto;
+        transform: rotate(-30deg);
+        filter: drop-shadow(0 3px 5px rgba(150, 80, 70, 0.25));
+        animation: aleteo 0.36s ease-in-out infinite alternate;
+    }
+
+    @keyframes flotar {
+        0%,
+        100% {
+            transform: translate(0, 0);
+        }
+        50% {
+            transform: translate(-6px, -8px);
+        }
+    }
+
+    @keyframes aleteo {
+        from {
+            transform: rotate(-30deg) scaleX(1);
+        }
+        to {
+            transform: rotate(-30deg) scaleX(0.35);
+        }
+    }
+
+    /* ── Medallones ─────────────────────────────────────────── */
+    .casillas-contador {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 3cqw;
+        width: 100%;
+        margin-top: 5cqw;
+    }
+
+    .casilla {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fdf1ee 60%, #f8e1dc 100%);
+        box-shadow:
+            0 8px 18px rgba(150, 80, 70, 0.18),
+            inset 0 0 0 1px rgba(183, 110, 121, 0.25);
+    }
+
+    /* El aro gira -90° para que arranque a llenarse desde arriba */
+    .aro {
+        position: absolute;
+        inset: -4%;
+        width: 108%;
+        height: 108%;
+        rotate: -90deg;
+        overflow: visible;
+    }
+
+    .aro-fondo {
+        fill: none;
+        stroke: rgba(201, 151, 138, 0.25);
+        stroke-width: 2.5;
+    }
+
+    .aro-lleno {
+        fill: none;
+        stroke: #c07c86;
+        stroke-width: 3;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.6s ease;
+    }
+
+    .numero-contador {
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        color: #b76e79;
+        font-size: min(8.6cqw, 2rem);
+        line-height: 1;
+        font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    .rotulo-contador {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        color: #c0905a;
+        font-size: min(3.2cqw, 0.8rem);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        line-height: 1.2;
+        margin-top: 0.8cqw;
+    }
+
+    /* Pulso cuando cambia un número */
+    .numero-contador.late {
+        animation: late 0.45s ease-out;
+    }
+
+    @keyframes late {
+        0% {
+            transform: scale(1.18);
+            opacity: 0.6;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* ── La fecha, debajo ───────────────────────────────────── */
+    .fecha-contador {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+        margin-top: 6cqw;
+        padding: 0.4em 1.2em;
+        border: 1px solid rgba(183, 110, 121, 0.45);
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.6);
+        font-family: "Charm", cursive;
+        font-size: min(4.6cqw, 1.1rem);
+        color: #b76e79;
+        white-space: nowrap;
+    }
+
+    .corazon-fecha {
+        font-size: 0.8em;
+        color: #c0905a;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .mariposa-contador,
+        .mariposa-alas,
+        .numero-contador.late {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const bloque = document.getElementById("contador");
+        if (!bloque) return;
+
+        /*
+           Entrada: título y separador bajan, los medallones suben en
+           cascada y la fecha aparece al final. "restart / reset" hace
+           que se repita cada vez que se baja.
+        */
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: bloque,
+                start: "top 88%",
+                toggleActions: "restart none none reset",
+            },
+        });
+
+        const salida = { opacity: 0, filter: "blur(6px)" };
+        const q = (sel: string) => bloque.querySelectorAll(sel);
+
+        tl.from(q(".titulo-contador, .separador-contador"), {
+            ...salida,
+            y: -12,
+            duration: 1.1,
+            stagger: 0.15,
+            ease: "power2.out",
+        })
+            .from(
+                q(".casilla"),
+                {
+                    ...salida,
+                    y: 22,
+                    scale: 0.85,
+                    duration: 1,
+                    stagger: 0.12,
+                    ease: "back.out(1.5)",
+                },
+                0.4,
+            )
+            .from(q(".fecha-contador"), { ...salida, y: 10, duration: 0.9 }, 1.1)
+            // Solo opacidad: el vuelo de la mariposa ya usa transform
+            .from(q(".mariposa-contador"), { opacity: 0, duration: 0.8 }, 0.8);
+
+        const objetivo = new Date(bloque.dataset.fecha as string).getTime();
+        const el = (id: string) => document.getElementById(id);
+        const dosDigitos = (n: number) => n.toString().padStart(2, "0");
+
+        // Escribe el número y, si cambió, lo hace latir
+        const poner = (id: string, texto: string) => {
+            const nodo = el(id);
+            if (!nodo || nodo.textContent === texto) return;
+            nodo.textContent = texto;
+            nodo.classList.remove("late");
+            void nodo.offsetWidth; // reinicia la animación
+            nodo.classList.add("late");
+        };
+
+        // Llena el aro según la fracción (0 a 1)
+        const llenar = (id: string, fraccion: number) => {
+            const aro = el(`aro-${id}`) as SVGCircleElement | null;
+            if (!aro) return;
+            const largo = Number(aro.getAttribute("stroke-dasharray"));
+            aro.style.strokeDashoffset = String(largo * (1 - fraccion));
+        };
+
+        let reloj = 0;
+
+        const pintar = () => {
+            const resta = Math.max(objetivo - Date.now(), 0);
+            const seg = Math.floor(resta / 1000);
+
+            const dias = Math.floor(seg / 86400);
+            const horas = Math.floor((seg % 86400) / 3600);
+            const minutos = Math.floor((seg % 3600) / 60);
+            const segundos = seg % 60;
+
+            poner("dias", dias.toString());
+            poner("horas", dosDigitos(horas));
+            poner("minutos", dosDigitos(minutos));
+            poner("segundos", dosDigitos(segundos));
+
+            // Los días siempre llenos; el resto, según lo que queda
+            llenar("dias", dias > 0 ? 1 : 0);
+            llenar("horas", horas / 24);
+            llenar("minutos", minutos / 60);
+            llenar("segundos", segundos / 60);
+
+            // Llegó la hora: se cambia el título y se para el reloj
+            if (resta === 0) {
+                const titulo = bloque.querySelector(".titulo-contador");
+                if (titulo && bloque.dataset.llegada) {
+                    titulo.textContent = bloque.dataset.llegada;
+                }
+                window.clearInterval(reloj);
+            }
+        };
+
+        pintar();
+        reloj = window.setInterval(pintar, 1000);
+    });
+</script>

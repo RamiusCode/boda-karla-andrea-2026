@@ -1,0 +1,390 @@
+---
+// src/components/Calendario.astro — El mes en grilla, con el día de los
+// XV marcado con un corazón rosa gold. Recibe la fecha por props para no
+// repetir la cuenta en cada componente que lo usa.
+//
+// Tarjeta clara con borde rosa gold, la corona arriba y el mismo ramo
+// de NombresPadres (lateral.webp) asomando por cada costado.
+interface Props {
+    anio: number;
+    mes: number; // 1 = enero … 12 = diciembre
+    dia: number; // día a marcar
+}
+
+const { anio, mes, dia } = Astro.props;
+
+const DIAS_SEMANA = ["D", "L", "M", "M", "J", "V", "S"];
+const NOMBRES_MES = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+];
+
+const nombreMes = NOMBRES_MES[mes - 1];
+
+const arranque = new Date(anio, mes - 1, 1).getDay(); // huecos antes del 1
+const diasDelMes = new Date(anio, mes, 0).getDate();
+
+const celdas: (number | null)[] = [
+    ...Array(arranque).fill(null),
+    ...Array.from({ length: diasDelMes }, (_, i) => i + 1),
+];
+while (celdas.length % 7 !== 0) celdas.push(null);
+
+const semanas = Array.from({ length: celdas.length / 7 }, (_, i) =>
+    celdas.slice(i * 7, i * 7 + 7),
+);
+---
+
+<div class="calendario-escena">
+    <!-- Ramos de los costados: la misma imagen, la derecha espejada -->
+    <img
+        src="/imagenes/lateral.webp"
+        alt=""
+        width="222"
+        height="680"
+        aria-hidden="true"
+        loading="lazy"
+        class="ramo-calendario ramo-izq select-none"
+    />
+    <img
+        src="/imagenes/lateral.webp"
+        alt=""
+        width="222"
+        height="680"
+        aria-hidden="true"
+        loading="lazy"
+        class="ramo-calendario ramo-der select-none"
+    />
+
+    <div id="calendario-suelto" class="calendario-suelto">
+        <img
+            src="/imagenes/corona.png"
+            alt=""
+            width="1055"
+            height="527"
+            aria-hidden="true"
+            loading="lazy"
+            class="corona-calendario select-none"
+        />
+
+        <p class="mes-calendario">{nombreMes} {anio}</p>
+
+        <span class="linea-calendario" aria-hidden="true">
+            <span class="rombo-calendario"></span>
+        </span>
+
+        <div class="almanaque">
+            <div class="fila-semana encabezado-almanaque">
+                {DIAS_SEMANA.map((letra) => <span class="celda-almanaque">{letra}</span>)}
+            </div>
+
+            {
+                semanas.map((semana) => (
+                    <div class="fila-semana">
+                        {semana.map((numero) => (
+                            <span
+                                class:list={[
+                                    "celda-almanaque",
+                                    numero === dia && "dia-marcado",
+                                ]}
+                            >
+                                {numero === dia && (
+                                    <svg
+                                        class="corazon-marcado"
+                                        viewBox="0 0 32 29"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M16 28 C6 20 1 14.5 1 8.5 1 4.4 4.3 1 8.4 1 11.6 1 14.3 2.9 16 5.6 17.7 2.9 20.4 1 23.6 1 27.7 1 31 4.4 31 8.5 31 14.5 26 20 16 28Z" />
+                                    </svg>
+                                )}
+                                <span class="numero-celda">{numero ?? ""}</span>
+                            </span>
+                        ))}
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* La escena deja lugar a los costados para los ramos */
+    .calendario-escena {
+        position: relative;
+        width: 100%;
+        padding: 1.5rem 13%;
+        overflow: hidden;
+    }
+
+    /* Ramos asomando por los bordes, centrados a lo alto. Van con
+       translate / scale sueltos: GSAP anima transform sin pisarlos. */
+    .ramo-calendario {
+        position: absolute;
+        top: 50%;
+        width: min(17%, 76px);
+        height: auto;
+        translate: 0 -50%;
+        pointer-events: none;
+        filter: drop-shadow(0 4px 8px rgba(150, 80, 70, 0.18));
+    }
+
+    .ramo-izq {
+        left: 0;
+    }
+
+    .ramo-der {
+        right: 0;
+        scale: -1 1;
+    }
+
+    /* Tarjeta clara: blanco translúcido, borde rosa gold fino */
+    .calendario-suelto {
+        position: relative;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+        container-type: inline-size;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 7% 6%;
+        border: 1px solid rgba(183, 110, 121, 0.45);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow:
+            0 10px 28px rgba(150, 80, 70, 0.16),
+            0 0 0 5px rgba(255, 255, 255, 0.45);
+    }
+
+    .corona-calendario {
+        width: 34cqw;
+        height: auto;
+        filter: drop-shadow(0 4px 8px rgba(150, 90, 70, 0.18));
+    }
+
+    .mes-calendario {
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        color: #b76e79;
+        font-size: 7.4cqw;
+        line-height: 1.2;
+        letter-spacing: 0.06em;
+        text-indent: 0.06em;
+        text-transform: uppercase;
+        margin-top: 2cqw;
+    }
+
+    /* Filete fino con rombo al medio */
+    .linea-calendario {
+        position: relative;
+        display: block;
+        width: 46cqw;
+        height: 1px;
+        margin-top: 2.4cqw;
+        background: #c9978a;
+    }
+
+    .rombo-calendario {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 7px;
+        height: 7px;
+        margin: -3.5px 0 0 -3.5px;
+        transform: rotate(45deg);
+        background: #f2c3c8;
+        border: 1px solid #b76e79;
+    }
+
+    .almanaque {
+        width: 100%;
+        margin-top: 4cqw;
+    }
+
+    .fila-semana {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .celda-almanaque {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 10.5cqw;
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 600;
+        font-size: 5.6cqw;
+        color: #9a6a5e;
+    }
+
+    .encabezado-almanaque .celda-almanaque {
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        color: #c0905a;
+        font-size: 5.2cqw;
+        border-bottom: 1px solid rgba(192, 144, 90, 0.3);
+        margin-bottom: 1.5cqw;
+    }
+
+    /* El día de los XV: número blanco sobre un corazón rosa gold */
+    .dia-marcado .numero-celda {
+        position: relative;
+        z-index: 1;
+        color: #fff;
+        font-weight: 700;
+        margin-top: -0.6cqw;
+    }
+
+    .corazon-marcado {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 11cqw;
+        height: 10cqw;
+        translate: -50% -50%;
+        fill: #c07c86;
+        filter: drop-shadow(0 3px 6px rgba(183, 110, 121, 0.45));
+        animation: latido 1.6s ease-in-out infinite;
+    }
+
+    /* Doble latido suave, como un corazón */
+    @keyframes latido {
+        0%,
+        100% {
+            scale: 1;
+        }
+        15% {
+            scale: 1.14;
+        }
+        30% {
+            scale: 1;
+        }
+        45% {
+            scale: 1.08;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .corazon-marcado {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const calendario = document.getElementById("calendario-suelto");
+        if (!calendario) return;
+
+        /*
+           Todo arranca en el mismo instante; lo que cambia es de dónde
+           viene cada pieza: la corona baja, el mes crece, la línea se
+           traza desde el centro, los días de la semana bajan y los
+           números suben. Todos salen de un desenfoque leve que se
+           disipa, para que se sienta suave y no un golpe seco.
+        */
+        /*
+           toggleActions = onEnter | onLeave | onEnterBack | onLeaveBack.
+           "restart" al entrar bajando la reproduce de cero cada vez;
+           "reset" al salir por arriba la deja escondida, lista para la
+           próxima bajada.
+        */
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: calendario,
+                start: "top 85%",
+                toggleActions: "restart none none reset",
+            },
+        });
+
+        const suave = "power2.out";
+        const salida = { opacity: 0, filter: "blur(7px)" };
+        const juntos = 0; // todas las piezas arrancan acá
+
+        const anima = (sel: string, extra: object, duration: number) => {
+            const el = calendario.querySelector(sel);
+            if (el) tl.from(el, { ...salida, ...extra, duration, ease: suave }, juntos);
+        };
+
+        // La corona baja desde arriba
+        anima(".corona-calendario", { y: -24, scale: 0.9 }, 1.3);
+
+        // El mes se abre apenas desde su centro
+        anima(".mes-calendario", { scale: 0.94 }, 1.4);
+
+        // La línea se traza sola, abriéndose desde el centro
+        anima(".linea-calendario", { scaleX: 0, transformOrigin: "center center" }, 1.5);
+
+        // Las letras de los días bajan desde arriba, en cascada corta
+        const cabecera = calendario.querySelectorAll(
+            ".encabezado-almanaque .celda-almanaque",
+        );
+        if (cabecera.length) {
+            tl.from(
+                cabecera,
+                {
+                    ...salida,
+                    y: -12,
+                    duration: 1.2,
+                    ease: suave,
+                    stagger: { each: 0.03, from: "center" },
+                },
+                juntos,
+            );
+        }
+
+        /*
+           Los números suben desde abajo, con un roce de 0.015s entre
+           celda y celda que sale del centro hacia afuera: se lee como
+           una sola aparición con onda, no como una lista cargándose.
+        */
+        const numeros = calendario.querySelectorAll(
+            ".fila-semana:not(.encabezado-almanaque) .celda-almanaque",
+        );
+        if (numeros.length) {
+            tl.from(
+                numeros,
+                {
+                    ...salida,
+                    y: 10,
+                    duration: 1.2,
+                    ease: suave,
+                    stagger: { each: 0.015, from: "center", grid: "auto" },
+                },
+                juntos,
+            );
+        }
+
+        // El corazón del día marcado aparece al final. Solo opacidad:
+        // el latido CSS ya usa scale.
+        const corazon = calendario.querySelector(".corazon-marcado");
+        if (corazon) {
+            tl.from(corazon, { opacity: 0, duration: 1.2, ease: suave }, 0.8);
+        }
+
+        // Los ramos entran cada uno desde su costado
+        const ramos = calendario.parentElement?.querySelectorAll(".ramo-calendario");
+        if (ramos && ramos.length === 2) {
+            tl.from(ramos[0], { opacity: 0, x: -30, duration: 1.2, ease: suave }, juntos);
+            tl.from(ramos[1], { opacity: 0, x: 30, duration: 1.2, ease: suave }, juntos);
+        }
+    });
+</script>

@@ -1,0 +1,151 @@
+---
+// src/components/NombresPadres.astro
+// Padres y padrinos, con un ramo de rosas asomando por cada costado:
+// lateral.webp a la izquierda y la misma imagen espejada a la derecha.
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const frase = [
+    "Con la bendición de mis padres",
+    "y el acompañamiento de mis padrinos",
+];
+
+const grupos = [
+    {
+        titulo: "Mis padres",
+        nombres: ["Erwin Montoya Tola †", "Tania Karla Flores Siles"],
+    },
+    {
+        titulo: "Mis padrinos",
+        nombres: ["Rolando Colque Choque", "Liceth Choque Albarado"],
+    },
+];
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="padres" class="relative w-full overflow-hidden px-4 pt-5 pb-3">
+    <div id="bloque-padres" class="relative flex flex-col items-center text-center">
+        <p class="font-great-vibes frase-padres">
+            {frase.map((linea) => <span class="block">{linea}</span>)}
+        </p>
+
+        <!--
+           Los ramos van acá adentro y no en la sección: así se centran
+           a la altura de los nombres y nunca tocan la frase de arriba.
+        -->
+        <div class="nombres-con-ramos">
+            <img
+                id="lateral-izq"
+                src="/imagenes/lateral.webp"
+                alt=""
+                width="222"
+                height="680"
+                aria-hidden="true"
+                loading="lazy"
+                class="lateral left-0 select-none"
+            />
+            <img
+                id="lateral-der"
+                src="/imagenes/lateral.webp"
+                alt=""
+                width="222"
+                height="680"
+                aria-hidden="true"
+                loading="lazy"
+                class="lateral lateral-der right-0 select-none"
+            />
+
+            {
+                grupos.map((grupo) => (
+                    <div class="grupo-padres">
+                        <h3 class="font-great-vibes rotulo-padres">{grupo.titulo}</h3>
+                        {grupo.nombres.map((nombre) => (
+                            <p class="font-charm nombre-padre">{nombre}</p>
+                        ))}
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Bloque de nombres: llega de borde a borde (anula el px-4 de la
+       sección) para que los ramos asomen desde el filo de la pantalla */
+    .nombres-con-ramos {
+        position: relative;
+        align-self: stretch;
+        margin-inline: -1rem;
+        padding-block: 0.5rem;
+    }
+
+    /* Ramos asomando por los bordes, centrados a lo alto de los nombres */
+    .lateral {
+        position: absolute;
+        top: 50%;
+        width: min(16%, 70px);
+        height: auto;
+        translate: 0 -50%;
+        pointer-events: none;
+        filter: drop-shadow(0 4px 8px rgba(150, 80, 70, 0.18));
+    }
+
+    /* El de la derecha es el mismo ramo, espejado */
+    .lateral-der {
+        scale: -1 1;
+    }
+
+    /* Frase de arriba en Great Vibes: sin mayúsculas ni espaciado */
+    .frase-padres {
+        color: #c0905a;
+        font-size: clamp(1.75rem, 7.9vw, 2.3rem);
+        line-height: 1.3;
+        margin-bottom: 1.2rem;
+        /* La frase usa todo el ancho: va arriba, donde los ramos de los
+           costados todavía no llegan. Si un renglón no entra, balance
+           lo parte en partes parejas, sin palabras sueltas */
+        text-wrap: balance;
+    }
+
+    /* Los nombres sí van entre los ramos: se apartan de los costados */
+    .grupo-padres {
+        padding-inline: 14%;
+    }
+
+    .grupo-padres + .grupo-padres {
+        margin-top: 1.1rem;
+    }
+
+    /* Rótulo en Great Vibes dorado, como la frase; nombres en rosa gold */
+    .rotulo-padres {
+        color: #c0905a;
+        font-size: 1.9rem;
+        font-weight: 400;
+        line-height: 1.3;
+        /* Great Vibes: sin mayúsculas forzadas ni espaciado */
+        margin-bottom: 0.15rem;
+    }
+
+    .nombre-padre {
+        color: #b76e79;
+        font-size: 1.15rem;
+        line-height: 1.6;
+    }
+</style>
+
+<script>
+    import { animarEntrada } from "../scripts/animaciones";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const bloque = document.getElementById("bloque-padres");
+        if (!bloque) return;
+
+        animarEntrada(bloque.querySelectorAll(".frase-padres, .grupo-padres"), bloque, {
+            stagger: 0.15,
+        });
+
+        // Los ramos entran cada uno desde su propio costado
+        const izq = document.getElementById("lateral-izq");
+        const der = document.getElementById("lateral-der");
+        if (izq) animarEntrada(izq, bloque, { x: -30, y: 0 });
+        if (der) animarEntrada(der, bloque, { x: 30, y: 0 });
+    });
+</script>

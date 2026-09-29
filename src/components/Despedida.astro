@@ -1,0 +1,572 @@
+---
+// src/components/Despedida.astro
+// Cierre en rosa gold: el mensaje final en una tarjeta con esquinas,
+// un corazón como divisor, el pedido de confirmar y el botón a WhatsApp.
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const parrafo1 =
+    "Con la bendición de Dios y el amor de toda mi familia, me siento muy feliz de llegar a este momento tan especial de mi vida. Ahora empieza un camino lleno de sueños e ilusiones que, con mucha fe, humildad y esperanza, deseo cumplir. Quisiera, con inmensa alegría, compartir este comienzo de esta bella etapa junto a todos ustedes.";
+
+const parrafo2 =
+    "Tu presencia es muy importante para mí. Por favor, confirma tu asistencia para compartir juntos este día tan especial.";
+
+const llamado = "Por favor, haz clic para confirmar asistencia";
+
+// WhatsApp para confirmar: código de país (591 = Bolivia) + número,
+// sin el + ni espacios, que es como lo pide wa.me
+const whatsapp = "59170816760";
+const mensajeWhatsapp =
+    "¡Hola! Me complace confirmar mi asistencia a los XV años de Karla Andrea, que se realizará el sábado 17 de octubre. ¡Estaré sin falta!";
+const enlaceConfirmar = `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensajeWhatsapp)}`;
+const textoBoton = "Confirmar asistencia";
+
+// Despedida final, debajo del botón
+const fraseFinal = "¡Te espero para celebrar juntos!";
+const firma = "Con todo mi cariño,";
+const nombre = "Karla Andrea";
+const misXV = "Mis XV Años";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="despedida" class="relative w-full overflow-hidden">
+    <!-- Brillos sueltos en oro rosado -->
+    <span class="chispa chispa-1" aria-hidden="true"></span>
+    <span class="chispa chispa-2" aria-hidden="true"></span>
+    <span class="chispa chispa-3" aria-hidden="true"></span>
+
+    <div
+        id="bloque-despedida"
+        class="relative flex flex-col items-center px-6 py-12 text-center"
+    >
+        <!-- El mensaje, en tarjeta clara con esquinas rosa gold -->
+        <div class="card-despedida">
+            <span class="esquina esquina-si" aria-hidden="true"></span>
+            <span class="esquina esquina-sd" aria-hidden="true"></span>
+            <span class="esquina esquina-ii" aria-hidden="true"></span>
+            <span class="esquina esquina-id" aria-hidden="true"></span>
+
+            <p class="parrafo-despedida">{parrafo1}</p>
+
+            <div class="divisor-corazon" aria-hidden="true">
+                <span class="linea-divisor"></span>
+                <span class="corazon-divisor">♥</span>
+                <span class="linea-divisor linea-divisor-der"></span>
+            </div>
+
+            <p class="parrafo-despedida">{parrafo2}</p>
+        </div>
+
+        <p class="llamado-despedida">{llamado}</p>
+
+        <!-- Confirmar asistencia: botón lleno en rosa gold, sin íconos -->
+        <a
+            href={enlaceConfirmar}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="boton-confirmar"
+        >
+            {textoBoton}
+        </a>
+
+        <!-- ── Despedida final ──────────────────────────────────── -->
+        <div id="cierre-xv" class="cierre-xv">
+            <!-- Mariposas volando alrededor del nombre. El span lleva el
+                 recorrido y la imagen el aleteo, así no se pisan. -->
+            {
+                [1, 2, 3].map((n) => (
+                    <span class={`mariposa mariposa-${n}`} aria-hidden="true">
+                        <img
+                            src="/imagenes/mariposa.webp"
+                            alt=""
+                            width="360"
+                            height="240"
+                            loading="lazy"
+                            class="mariposa-alas select-none"
+                        />
+                    </span>
+                ))
+            }
+
+            <img
+                src="/imagenes/separador.png"
+                alt=""
+                width="1920"
+                height="198"
+                aria-hidden="true"
+                loading="lazy"
+                class="separador-cierre select-none"
+            />
+
+            <img
+                src="/imagenes/corona.png"
+                alt=""
+                width="1055"
+                height="527"
+                aria-hidden="true"
+                loading="lazy"
+                class="corona-cierre select-none"
+            />
+
+            <p class="font-great-vibes frase-final">{fraseFinal}</p>
+
+            <p class="firma-cierre">{firma}</p>
+
+            <!-- El nombre, con un ramo a cada lado. La fila llega de borde
+                 a borde (anula el px-6) para que los ramos asomen del filo -->
+            <div class="fila-nombre">
+                <img
+                    src="/imagenes/lateral.webp"
+                    alt=""
+                    width="222"
+                    height="680"
+                    aria-hidden="true"
+                    loading="lazy"
+                    class="ramo-cierre ramo-izq select-none"
+                />
+                <p class="font-great-vibes nombre-cierre">{nombre}</p>
+                <img
+                    src="/imagenes/lateral.webp"
+                    alt=""
+                    width="222"
+                    height="680"
+                    aria-hidden="true"
+                    loading="lazy"
+                    class="ramo-cierre ramo-der select-none"
+                />
+            </div>
+
+            <p class="misxv-cierre">{misXV}</p>
+
+            <img
+                src="/imagenes/florseparador.webp"
+                alt=""
+                width="687"
+                height="340"
+                aria-hidden="true"
+                loading="lazy"
+                class="ramo-final select-none"
+            />
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Los cqw de abajo se miden contra el ancho del bloque */
+    #bloque-despedida {
+        container-type: inline-size;
+        max-width: 430px;
+        margin: 0 auto;
+    }
+
+    /* ── Tarjeta ────────────────────────────────────────────── */
+    .card-despedida {
+        position: relative;
+        width: 100%;
+        padding: 9cqw 7cqw;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow:
+            0 10px 28px rgba(150, 80, 70, 0.14),
+            inset 0 0 0 1px rgba(183, 110, 121, 0.3);
+    }
+
+    /* Esquinas en L, un poco hacia afuera de la tarjeta */
+    .esquina {
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        border-color: #b76e79;
+        border-style: solid;
+        border-width: 0;
+    }
+
+    .esquina-si {
+        top: -6px;
+        left: -6px;
+        border-top-width: 2px;
+        border-left-width: 2px;
+        border-top-left-radius: 14px;
+    }
+    .esquina-sd {
+        top: -6px;
+        right: -6px;
+        border-top-width: 2px;
+        border-right-width: 2px;
+        border-top-right-radius: 14px;
+    }
+    .esquina-ii {
+        bottom: -6px;
+        left: -6px;
+        border-bottom-width: 2px;
+        border-left-width: 2px;
+        border-bottom-left-radius: 14px;
+    }
+    .esquina-id {
+        bottom: -6px;
+        right: -6px;
+        border-bottom-width: 2px;
+        border-right-width: 2px;
+        border-bottom-right-radius: 14px;
+    }
+
+    .parrafo-despedida {
+        font-family: "Charm", cursive;
+        /* Equivale a text-xl de Tailwind, como la dedicatoria */
+        font-size: 1.25rem;
+        line-height: 1.75;
+        color: #9a6a5e;
+        text-wrap: pretty;
+    }
+
+    /* ── Divisor ────────────────────────────────────────────── */
+    .divisor-corazon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3cqw;
+        margin: 6cqw 0;
+    }
+
+    .linea-divisor {
+        width: 18cqw;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #b76e79);
+    }
+
+    .linea-divisor-der {
+        background: linear-gradient(90deg, #b76e79, transparent);
+    }
+
+    .corazon-divisor {
+        color: #c07c86;
+        font-size: min(5.4cqw, 1.3rem);
+        line-height: 1;
+        animation: latido 1.8s ease-in-out infinite;
+    }
+
+    @keyframes latido {
+        0%,
+        100% {
+            transform: scale(1);
+        }
+        15% {
+            transform: scale(1.22);
+        }
+        30% {
+            transform: scale(1);
+        }
+        45% {
+            transform: scale(1.1);
+        }
+    }
+
+    /* ── Llamado y botón ────────────────────────────────────── */
+    .llamado-despedida {
+        margin-top: 8cqw;
+        max-width: 80cqw;
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        font-size: 1.25rem;
+        line-height: 1.4;
+        color: #b76e79;
+        text-wrap: balance;
+    }
+
+    /* Lleno en rosa gold, con un brillo que lo cruza cada tanto */
+    .boton-confirmar {
+        position: relative;
+        display: inline-block;
+        margin-top: 5cqw;
+        padding: 0.8em 2.2em;
+        border-radius: 9999px;
+        overflow: hidden;
+        background: #b76e79;
+        color: #fff;
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        font-size: min(4.8cqw, 1.1rem);
+        letter-spacing: 0.14em;
+        text-indent: 0.14em;
+        text-transform: uppercase;
+        box-shadow:
+            0 8px 18px rgba(183, 110, 121, 0.35),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+        transition:
+            transform 0.3s ease,
+            background 0.3s ease;
+    }
+
+    .boton-confirmar:hover {
+        background: #a45d69;
+        transform: translateY(-2px);
+    }
+
+    .boton-confirmar::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -60%;
+        width: 40%;
+        background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+        animation: brillo-boton 3.2s ease-in-out infinite;
+    }
+
+    @keyframes brillo-boton {
+        0%,
+        60% {
+            left: -60%;
+        }
+        100% {
+            left: 130%;
+        }
+    }
+
+    /* ── Despedida final ───────────────────────────────────── */
+    .cierre-xv {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 12cqw;
+    }
+
+    .separador-cierre {
+        width: 62cqw;
+        height: auto;
+    }
+
+    .corona-cierre {
+        width: 30cqw;
+        height: auto;
+        margin-top: 6cqw;
+        filter: drop-shadow(0 4px 8px rgba(150, 90, 70, 0.18));
+    }
+
+    /* Great Vibes: sin mayúsculas forzadas ni espaciado */
+    .frase-final {
+        margin-top: 3cqw;
+        color: #c0905a;
+        font-size: min(9.5cqw, 2.3rem);
+        line-height: 1.25;
+        text-wrap: balance;
+    }
+
+    .firma-cierre {
+        margin-top: 6cqw;
+        font-family: "Charm", cursive;
+        font-size: 1.25rem;
+        color: #9a6a5e;
+    }
+
+    .fila-nombre {
+        position: relative;
+        align-self: stretch;
+        margin-inline: -1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 150px;
+    }
+
+    .nombre-cierre {
+        color: #b76e79;
+        font-size: min(14cqw, 3.4rem);
+        line-height: 1.2;
+        text-shadow: 0 2px 4px rgba(120, 60, 60, 0.12);
+    }
+
+    /* Ramos a los costados del nombre. translate / scale sueltos: la
+       animación de entrada usa transform sin pisarlos. */
+    .ramo-cierre {
+        position: absolute;
+        top: 50%;
+        width: min(14%, 60px);
+        height: auto;
+        translate: 0 -50%;
+        pointer-events: none;
+        filter: drop-shadow(0 4px 8px rgba(150, 80, 70, 0.18));
+    }
+
+    .ramo-izq {
+        left: 0;
+    }
+
+    .ramo-der {
+        right: 0;
+        scale: -1 1;
+    }
+
+    .misxv-cierre {
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        font-size: 1.25rem;
+        letter-spacing: 0.1em;
+        text-indent: 0.1em;
+        text-transform: uppercase;
+        color: #c0905a;
+    }
+
+    .ramo-final {
+        width: 70cqw;
+        height: auto;
+        margin-top: 6cqw;
+        filter: drop-shadow(0 6px 10px rgba(150, 80, 70, 0.18));
+    }
+
+    /* ── Mariposas ─────────────────────────────────────────── */
+    /* Cada una con su lugar, tamaño y recorrido (--dx, --dy); las de
+       la izquierda miran a la derecha y al revés. */
+    .mariposa {
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        animation: vuelo var(--t, 9s) ease-in-out infinite;
+        animation-delay: var(--d, 0s);
+    }
+
+    .mariposa-alas {
+        display: block;
+        width: 100%;
+        height: auto;
+        transform: rotate(var(--r, 0deg));
+        filter: drop-shadow(0 4px 6px rgba(150, 80, 70, 0.25));
+        animation: aleteo var(--a, 0.35s) ease-in-out infinite alternate;
+    }
+
+    .mariposa-1 {
+        left: 4%;
+        top: 14%;
+        width: 12cqw;
+        --dx: 18px;
+        --dy: 22px;
+        --r: 38deg;
+        --t: 9s;
+    }
+    .mariposa-2 {
+        right: 5%;
+        top: 30%;
+        width: 10cqw;
+        --dx: -20px;
+        --dy: 24px;
+        --r: -40deg;
+        --t: 10s;
+        --d: -3s;
+        --a: 0.4s;
+    }
+    .mariposa-3 {
+        left: 12%;
+        bottom: 14%;
+        width: 8cqw;
+        --dx: 16px;
+        --dy: 20px;
+        --r: 30deg;
+        --t: 8s;
+        --d: -5s;
+        --a: 0.3s;
+    }
+
+    @keyframes vuelo {
+        0%,
+        100% {
+            transform: translate(0, 0);
+        }
+        25% {
+            transform: translate(var(--dx), calc(var(--dy) * -1));
+        }
+        50% {
+            transform: translate(calc(var(--dx) * 0.3), calc(var(--dy) * -1.7));
+        }
+        75% {
+            transform: translate(calc(var(--dx) * -0.6), calc(var(--dy) * -0.7));
+        }
+    }
+
+    @keyframes aleteo {
+        from {
+            transform: rotate(var(--r, 0deg)) scaleX(1);
+        }
+        to {
+            transform: rotate(var(--r, 0deg)) scaleX(0.35);
+        }
+    }
+
+    /* ── Chispas ────────────────────────────────────────────── */
+    .chispa {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 9999px;
+        background: #f3c9b8;
+        box-shadow: 0 0 6px 1px rgba(214, 150, 125, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        animation: brillo 4.2s ease-in-out infinite;
+    }
+
+    .chispa-1 {
+        left: 6%;
+        top: 12%;
+        animation-delay: 0.3s;
+    }
+    .chispa-2 {
+        right: 5%;
+        top: 48%;
+        animation-delay: 1.7s;
+    }
+    .chispa-3 {
+        left: 10%;
+        bottom: 12%;
+        animation-delay: 3s;
+    }
+
+    @keyframes brillo {
+        0%,
+        100% {
+            opacity: 0;
+            transform: scale(0.6);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .chispa,
+        .corazon-divisor,
+        .boton-confirmar::after,
+        .mariposa,
+        .mariposa-alas {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    import { animarEntrada } from "../scripts/animaciones";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const bloque = document.getElementById("bloque-despedida");
+        if (!bloque) return;
+
+        // Tarjeta, llamado y botón
+        const principales = Array.from(bloque.children).filter((el) => el.id !== "cierre-xv");
+        animarEntrada(principales, bloque, { stagger: 0.15 });
+
+        // La despedida final entra en cascada, pieza por pieza. Las
+        // mariposas quedan afuera: su transform lo usa el vuelo en CSS.
+        const cierre = document.getElementById("cierre-xv");
+        if (cierre) {
+            const piezas = Array.from(cierre.children).filter(
+                (el) => !el.classList.contains("mariposa"),
+            );
+            animarEntrada(piezas, cierre, { stagger: 0.15 });
+
+            const izq = cierre.querySelector(".ramo-izq");
+            const der = cierre.querySelector(".ramo-der");
+            if (izq) animarEntrada(izq, cierre, { x: -30, y: 0 });
+            if (der) animarEntrada(der, cierre, { x: 30, y: 0 });
+        }
+    });
+</script>

@@ -1,0 +1,532 @@
+---
+// src/components/NombresFlores.astro — Primera sección de la invitación.
+//
+// De arriba hacia abajo, igual que el diseño de referencia:
+//   fondo1.webp    → fondo con rosas y telas; se ESTIRA al alto del
+//                    celular para que las flores queden en las esquinas
+//   corona.png     → tiara
+//   separador.png  → filete con corazón
+//   "MIS XV AÑOS"  → versalitas en oro rosado liso
+//   filete fino con rombo (CSS)
+//   el nombre      → Great Vibes en oro rosado liso, como en la portada
+//   arco dorado    → dibujado en SVG, con la gema arriba
+//   silueta.png    → la quinceañera de espaldas, delante del arco
+//
+// Todo se mide en cqw / cqh (ancho y alto de la columna), así en un
+// celular chico entra entero y en uno largo se reparte el espacio.
+//
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const nombre = "Karla Andrea";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="arco-novios" class="relative w-full flex justify-center">
+    <div id="escena-xv" class="columna-xv relative w-full max-w-[430px] overflow-hidden">
+        <!-- Brillos sueltos en oro rosado -->
+        <span class="chispa chispa-1" aria-hidden="true"></span>
+        <span class="chispa chispa-2" aria-hidden="true"></span>
+        <span class="chispa chispa-3" aria-hidden="true"></span>
+        <span class="chispa chispa-4" aria-hidden="true"></span>
+        <span class="chispa chispa-5" aria-hidden="true"></span>
+
+        <!--
+           Mariposas volando. El span lleva el recorrido (hacia dónde
+           vuela) y la imagen de adentro el aleteo, así las dos
+           animaciones no se pisan sobre el mismo transform.
+        -->
+        {
+            [1, 2, 3, 4, 5].map((n) => (
+                <span class={`mariposa mariposa-${n}`} aria-hidden="true">
+                    <img
+                        src="/imagenes/mariposa.webp"
+                        alt=""
+                        width="360"
+                        height="240"
+                        class="mariposa-alas select-none"
+                    />
+                </span>
+            ))
+        }
+
+        <!-- Encabezado: corona · título · nombre -->
+        <div id="encabezado-xv" class="encabezado">
+            <img
+                src="/imagenes/corona.png"
+                alt=""
+                width="1055"
+                height="527"
+                aria-hidden="true"
+                class="corona select-none"
+            />
+
+            <img
+                src="/imagenes/separador.png"
+                alt=""
+                width="1920"
+                height="198"
+                aria-hidden="true"
+                class="separador select-none"
+            />
+
+            <h2 class="titulo-xv">Mis XV Años</h2>
+
+            <span class="filete" aria-hidden="true">
+                <span class="filete-rombo"></span>
+            </span>
+
+            <p class="nombre-xv font-great-vibes">{nombre}</p>
+        </div>
+
+        <!-- Arco + silueta: el arco va detrás, la chica delante -->
+        <div id="arco-xv" class="arco-wrap" aria-hidden="true">
+            <svg class="arco" viewBox="0 0 200 300" fill="none" preserveAspectRatio="none">
+                <path
+                    class="arco-linea"
+                    d="M12 300 V104 A88 88 0 0 1 188 104 V300"
+                    stroke="#c08577"
+                    stroke-width="1.6"
+                    vector-effect="non-scaling-stroke"></path>
+                <path
+                    class="arco-linea"
+                    d="M20 300 V104 A80 80 0 0 1 180 104 V300"
+                    stroke="#d9a79a"
+                    stroke-width="0.8"
+                    vector-effect="non-scaling-stroke"></path>
+            </svg>
+
+            <!-- Gema en la clave del arco -->
+            <span class="gema">
+                <svg viewBox="0 0 24 32" width="100%" height="100%">
+                    <path
+                        d="M12 1 L22 12 L12 31 L2 12 Z"
+                        fill="#f2b9c1"
+                        stroke="#b76e79"
+                        stroke-width="1.4"
+                        stroke-linejoin="round"></path>
+                    <path
+                        d="M2 12 H22 M12 1 L8 12 L12 31 L16 12 Z"
+                        fill="none"
+                        stroke="#b76e79"
+                        stroke-width="0.8"
+                        stroke-linejoin="round"></path>
+                </svg>
+            </span>
+
+            <img
+                src="/imagenes/silueta.png"
+                alt=""
+                width="1024"
+                height="1225"
+                class="silueta select-none"
+            />
+        </div>
+    </div>
+</section>
+
+<style>
+    /* ── Columna ────────────────────────────────────────────── */
+    /* Alto de una pantalla de celular; el fondo se estira a lo alto
+       (100% 100%) para que las rosas sigan en las cuatro esquinas. */
+    .columna-xv {
+        height: 100svh;
+        min-height: 560px;
+        container-type: size;
+    }
+
+    /* El fondo va en una capa aparte para desvanecer solo su borde de
+       abajo (un poco): la silueta, encima, queda entera. */
+    .columna-xv::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: #f6ddd4;
+        background-image: url("/imagenes/fondo1.webp");
+        background-size: 100% 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        -webkit-mask-image: linear-gradient(to bottom, #000 86%, transparent 100%);
+        mask-image: linear-gradient(to bottom, #000 86%, transparent 100%);
+        pointer-events: none;
+    }
+
+    /* ── Encabezado ─────────────────────────────────────────── */
+    .encabezado {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 7cqh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        z-index: 2;
+    }
+
+    .corona {
+        width: min(34cqw, 15.5cqh);
+        height: auto;
+        filter: drop-shadow(0 4px 8px rgba(150, 90, 70, 0.18));
+    }
+
+    .separador {
+        width: min(72cqw, 40cqh);
+        height: auto;
+        margin-top: 0.4cqh;
+    }
+
+    /* Oro rosado liso, sin degradé (igual que la portada) */
+    .titulo-xv,
+    .nombre-xv {
+        color: #b76e79;
+        /* Halo de luz blanca detrás de las letras: las despega de las
+           flores del fondo sin cambiar el color del texto. Tres capas:
+           un brillo pegado, uno más abierto y la sombrita de siempre. */
+        text-shadow:
+            0 0 6px rgba(255, 255, 255, 0.95),
+            0 0 16px rgba(255, 248, 245, 0.9),
+            0 1px 2px rgba(120, 60, 60, 0.12);
+    }
+
+    .titulo-xv {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 500;
+        font-size: min(8cqw, 4.1cqh);
+        line-height: 1.1;
+        letter-spacing: 0.06em;
+        /* El espaciado deja un hueco a la derecha: se compensa con sangría */
+        text-indent: 0.06em;
+        text-transform: uppercase;
+        margin-top: 0.6cqh;
+    }
+
+    /* Filete fino con un rombo al medio, debajo del título */
+    .filete {
+        position: relative;
+        display: block;
+        width: min(62cqw, 34cqh);
+        height: 1px;
+        margin-top: 1cqh;
+        background: #c9978a;
+    }
+
+    .filete-rombo {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 7px;
+        height: 7px;
+        margin: -3.5px 0 0 -3.5px;
+        transform: rotate(45deg);
+        background: #f2c3c8;
+        border: 1px solid #b76e79;
+    }
+
+    .nombre-xv {
+        position: relative;
+        font-size: min(15.5cqw, 8cqh);
+        line-height: 1.25;
+        margin-top: 5cqh;
+        /* Great Vibes es de trazo muy fino: un contorno delgado en un
+           rosa gold más profundo le da cuerpo sin cambiar su color.
+           paint-order deja el contorno por detrás del relleno. */
+        -webkit-text-stroke: 0.6px rgba(140, 70, 85, 0.55);
+        paint-order: stroke fill;
+    }
+
+    /* Nube de luz blanca detrás del nombre: aclara las flores justo
+       en esa franja para que el nombre se lea. Queda detrás del texto
+       (z -1) pero delante del fondo, porque el encabezado tiene su
+       propio z-index. */
+    .nombre-xv::before {
+        content: "";
+        position: absolute;
+        inset: 8% -6%;
+        z-index: -1;
+        border-radius: 50%;
+        background: radial-gradient(
+            ellipse at center,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(255, 250, 248, 0.7) 45%,
+            transparent 72%
+        );
+        filter: blur(6px);
+        pointer-events: none;
+    }
+
+    /* ── Arco + silueta ─────────────────────────────────────── */
+    /* El bloque tiene la proporción de la silueta y se apoya abajo */
+    .arco-wrap {
+        position: absolute;
+        left: 50%;
+        bottom: 8cqh;
+        width: min(86cqw, 40cqh);
+        aspect-ratio: 1024 / 1225;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    .arco {
+        position: absolute;
+        left: 16%;
+        right: 16%;
+        top: -14%;
+        bottom: 22%;
+        width: 68%;
+        height: 92%;
+        overflow: visible;
+        filter: drop-shadow(0 0 4px rgba(255, 235, 225, 0.8));
+    }
+
+    .gema {
+        position: absolute;
+        left: 50%;
+        top: -14%;
+        width: 5.5%;
+        aspect-ratio: 24 / 32;
+        transform: translate(-50%, -62%);
+        filter: drop-shadow(0 2px 4px rgba(150, 80, 80, 0.35));
+    }
+
+    .silueta {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: bottom center;
+        filter: drop-shadow(0 8px 18px rgba(150, 80, 70, 0.22));
+    }
+
+    /* ── Chispas ────────────────────────────────────────────── */
+    .chispa {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 9999px;
+        background: #f3c9b8;
+        box-shadow: 0 0 6px 1px rgba(214, 150, 125, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 3;
+        animation: brillo 4.2s ease-in-out infinite;
+    }
+
+    .chispa-1 {
+        left: 14%;
+        top: 30%;
+        animation-delay: 0.2s;
+    }
+    .chispa-2 {
+        right: 12%;
+        top: 22%;
+        animation-delay: 1.4s;
+    }
+    .chispa-3 {
+        left: 18%;
+        top: 55%;
+        animation-delay: 2.6s;
+    }
+    .chispa-4 {
+        right: 16%;
+        top: 48%;
+        animation-delay: 3.4s;
+    }
+    .chispa-5 {
+        left: 50%;
+        top: 40%;
+        animation-delay: 1.9s;
+    }
+
+    @keyframes brillo {
+        0%,
+        100% {
+            opacity: 0;
+            transform: scale(0.6);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* ── Mariposas ──────────────────────────────────────────── */
+    /* Cada una tiene su lugar, su tamaño y su recorrido (--dx, --dy);
+       van a los costados para no taparle la cara al nombre. */
+    .mariposa {
+        position: absolute;
+        z-index: 3;
+        pointer-events: none;
+        animation: vuelo var(--t, 9s) ease-in-out infinite;
+        animation-delay: var(--d, 0s);
+    }
+
+    .mariposa-alas {
+        display: block;
+        width: 100%;
+        height: auto;
+        transform: rotate(var(--r, 0deg));
+        filter: drop-shadow(0 4px 6px rgba(150, 80, 70, 0.25));
+        animation: aleteo var(--a, 0.35s) ease-in-out infinite alternate;
+    }
+
+    .mariposa-1 {
+        left: 6%;
+        top: 30%;
+        width: min(15cqw, 8cqh);
+        --dx: 22px;
+        --dy: 26px;
+        --r: 40deg;
+        --t: 9s;
+    }
+    .mariposa-2 {
+        right: 5%;
+        top: 44%;
+        width: min(19cqw, 10cqh);
+        --dx: -26px;
+        --dy: 30px;
+        --r: -45deg;
+        --t: 11s;
+        --d: -3s;
+        --a: 0.4s;
+    }
+    .mariposa-3 {
+        left: 10%;
+        top: 62%;
+        width: min(10cqw, 5.5cqh);
+        --dx: 18px;
+        --dy: 22px;
+        --r: 35deg;
+        --t: 8s;
+        --d: -5s;
+        --a: 0.28s;
+    }
+    .mariposa-4 {
+        right: 12%;
+        top: 17%;
+        width: min(9cqw, 5cqh);
+        --dx: -16px;
+        --dy: 18px;
+        --r: -38deg;
+        --t: 7.5s;
+        --d: -2s;
+        --a: 0.3s;
+    }
+    .mariposa-5 {
+        right: 8%;
+        top: 72%;
+        width: min(12cqw, 6.5cqh);
+        --dx: -20px;
+        --dy: 24px;
+        --r: -30deg;
+        --t: 10s;
+        --d: -6s;
+        --a: 0.33s;
+    }
+
+    /* Recorrido: sube, se ladea y vuelve, con un vaivén suave */
+    @keyframes vuelo {
+        0%,
+        100% {
+            transform: translate(0, 0);
+        }
+        25% {
+            transform: translate(var(--dx), calc(var(--dy) * -1));
+        }
+        50% {
+            transform: translate(calc(var(--dx) * 0.3), calc(var(--dy) * -1.7));
+        }
+        75% {
+            transform: translate(calc(var(--dx) * -0.6), calc(var(--dy) * -0.7));
+        }
+    }
+
+    /* Aleteo: las alas se cierran y se abren */
+    @keyframes aleteo {
+        from {
+            transform: rotate(var(--r, 0deg)) scaleX(1);
+        }
+        to {
+            transform: rotate(var(--r, 0deg)) scaleX(0.35);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .chispa,
+        .mariposa,
+        .mariposa-alas {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const escena = document.getElementById("escena-xv");
+        const encabezado = document.getElementById("encabezado-xv");
+        const arco = document.getElementById("arco-xv");
+        if (!escena || !encabezado || !arco) return;
+
+        /*
+           toggleActions = onEnter | onLeave | onEnterBack | onLeaveBack.
+           "restart" al entrar bajando la reproduce de cero cada vez;
+           "reset" al salir por arriba la deja escondida, lista para la
+           próxima bajada.
+        */
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: escena,
+                start: "top 88%",
+                toggleActions: "restart none none reset",
+            },
+        });
+
+        // Corona, separador, título, filete y nombre, en cascada
+        tl.from(encabezado.children, {
+            opacity: 0,
+            y: -16,
+            duration: 0.8,
+            stagger: 0.14,
+            ease: "power2.out",
+        });
+
+        // El arco se dibuja de abajo hacia la clave
+        const lineas = arco.querySelectorAll<SVGPathElement>(".arco-linea");
+        lineas.forEach((linea) => {
+            const largo = linea.getTotalLength();
+            gsap.set(linea, { strokeDasharray: largo });
+        });
+        tl.fromTo(
+            lineas,
+            { strokeDashoffset: (_i, el) => (el as SVGPathElement).getTotalLength() },
+            { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut" },
+            0.5,
+        );
+
+        // La gema aparece al cerrarse el arco
+        tl.from(
+            arco.querySelector(".gema"),
+            { opacity: 0, scale: 0.3, duration: 0.6, ease: "back.out(2)" },
+            1.6,
+        );
+
+        // La quinceañera sube despacio desde abajo
+        tl.from(
+            arco.querySelector(".silueta"),
+            { opacity: 0, y: 40, duration: 1.2, ease: "power3.out" },
+            0.9,
+        );
+
+        // Las mariposas aparecen de a una. Solo opacidad: el transform
+        // ya lo usa el vuelo en CSS.
+        tl.from(
+            escena.querySelectorAll(".mariposa"),
+            { opacity: 0, duration: 1, stagger: 0.25, ease: "power1.out" },
+            1.2,
+        );
+    });
+</script>

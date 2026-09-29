@@ -1,0 +1,209 @@
+---
+// src/components/CodigoVestimenta.astro
+// Código de vestimenta en rosa gold: título en Great Vibes, el traje y
+// el vestido (codigo.png pintado en rosa gold) y la etiqueta en cápsula.
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Código de Vestimenta";
+const etiqueta = "Formal";
+const nota = "El color rosado está reservado para la quinceañera";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="vestimenta" class="relative w-full overflow-hidden">
+    <!-- Brillos sueltos en oro rosado -->
+    <span class="chispa chispa-1" aria-hidden="true"></span>
+    <span class="chispa chispa-2" aria-hidden="true"></span>
+    <span class="chispa chispa-3" aria-hidden="true"></span>
+
+    <div
+        id="bloque-vestimenta"
+        class="relative flex flex-col items-center px-7 pt-10 pb-8 text-center"
+    >
+        <h2 class="font-great-vibes titulo-vestimenta">{titulo}</h2>
+
+        <img
+            src="/imagenes/separador.png"
+            alt=""
+            width="1920"
+            height="198"
+            aria-hidden="true"
+            loading="lazy"
+            class="separador-vestimenta select-none"
+        />
+
+        <!--
+           Traje y vestido (codigo.png). La imagen viene en marrón liso:
+           se pinta en rosa gold con máscara, suelta, sin marco.
+        -->
+        <div class="figuras" aria-hidden="true">
+            <span class="dibujo-codigo" style="--ic: url('/imagenes/codigo.png')"></span>
+        </div>
+
+        <p class="etiqueta-vestimenta">{etiqueta}</p>
+
+        <p class="nota-vestimenta">{nota}</p>
+
+        <!-- El color reservado, en un círculo -->
+        <span class="muestra-color" aria-hidden="true"></span>
+    </div>
+</section>
+
+<style>
+    /* Los cqw de abajo se miden contra el ancho del bloque */
+    #bloque-vestimenta {
+        container-type: inline-size;
+        max-width: 430px;
+        margin: 0 auto;
+    }
+
+    /* Great Vibes: sin mayúsculas forzadas ni espaciado */
+    .titulo-vestimenta {
+        color: #c0905a;
+        font-size: min(12.5cqw, 3.1rem);
+        line-height: 1.25;
+    }
+
+    .separador-vestimenta {
+        width: 62cqw;
+        height: auto;
+        margin-top: 1cqw;
+    }
+
+    /* ── Figuras ────────────────────────────────────────────── */
+    .figuras {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 5cqw;
+    }
+
+    /* La silueta se pinta en rosa gold: el color sale del fondo y la
+       forma, de la máscara */
+    .dibujo-codigo {
+        display: block;
+        width: 50cqw;
+        aspect-ratio: 369 / 251;
+        background-color: #b76e79;
+        -webkit-mask: var(--ic) center / contain no-repeat;
+        mask: var(--ic) center / contain no-repeat;
+    }
+
+    /* ── Textos ─────────────────────────────────────────────── */
+    .etiqueta-vestimenta {
+        margin-top: 5cqw;
+        padding: 0.35em 1.6em;
+        border: 1px solid rgba(183, 110, 121, 0.5);
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.6);
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        font-size: min(7cqw, 1.7rem);
+        letter-spacing: 0.08em;
+        text-indent: 0.08em;
+        text-transform: uppercase;
+        color: #b76e79;
+    }
+
+    .nota-vestimenta {
+        max-width: 80cqw;
+        margin-top: 4cqw;
+        font-family: "Charm", cursive;
+        font-size: min(5cqw, 1.2rem);
+        line-height: 1.6;
+        color: #9a6a5e;
+        text-wrap: balance;
+    }
+
+    /* Círculo liso rosa gold con aro blanco, como una muestra de tela */
+    .muestra-color {
+        display: block;
+        width: min(14cqw, 56px);
+        aspect-ratio: 1 / 1;
+        margin-top: 3cqw;
+        border-radius: 9999px;
+        background: #b76e79;
+        box-shadow:
+            0 0 0 4px #fff,
+            0 0 0 5px rgba(183, 110, 121, 0.45),
+            0 8px 16px rgba(150, 80, 70, 0.25);
+    }
+
+    /* ── Chispas ────────────────────────────────────────────── */
+    .chispa {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 9999px;
+        background: #f3c9b8;
+        box-shadow: 0 0 6px 1px rgba(214, 150, 125, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        animation: brillo 4.2s ease-in-out infinite;
+    }
+
+    .chispa-1 {
+        left: 12%;
+        top: 30%;
+        animation-delay: 0.3s;
+    }
+    .chispa-2 {
+        right: 10%;
+        top: 45%;
+        animation-delay: 1.7s;
+    }
+    .chispa-3 {
+        left: 16%;
+        bottom: 20%;
+        animation-delay: 3s;
+    }
+
+    @keyframes brillo {
+        0%,
+        100% {
+            opacity: 0;
+            transform: scale(0.6);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .chispa {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    import { animarEntrada } from "../scripts/animaciones";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const bloque = document.getElementById("bloque-vestimenta");
+        if (!bloque) return;
+
+        animarEntrada(bloque.children, bloque, { stagger: 0.12 });
+
+        // El traje y el vestido aparecen creciendo desde su centro
+        const dibujo = bloque.querySelector(".dibujo-codigo");
+        if (dibujo) {
+            gsap.from(dibujo, {
+                opacity: 0,
+                scale: 0.6,
+                duration: 1.1,
+                delay: 0.5,
+                ease: "back.out(1.6)",
+                scrollTrigger: {
+                    trigger: bloque,
+                    start: "top 85%",
+                    toggleActions: "restart none none reset",
+                },
+            });
+        }
+    });
+</script>

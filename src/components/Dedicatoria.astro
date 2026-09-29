@@ -1,0 +1,147 @@
+---
+// src/components/Dedicatoria.astro — Dedicatoria entre dos ramos.
+//
+// Tal cual el diseño de referencia:
+//   florseparador.webp → ramo de rosas arriba
+//   la frase           → cursiva serif en oro rosado liso
+//   florseparador.webp → el mismo ramo abajo, dado vuelta
+//
+// El fondo NO se toca acá: ya lo pone Layout.astro.
+//
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const frase =
+    "Los sueños se cumplen y hoy uno de los míos se hace realidad. Con la bendición de Dios y el amor de mi familia, te invito a celebrar mis 15 años.";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section
+    id="dedicatoria"
+    class="relative w-full overflow-hidden flex justify-center pt-10 pb-2 px-5"
+>
+    <div id="bloque-dedicatoria" class="bloque-dedicatoria">
+        <img
+            src="/imagenes/florseparador.webp"
+            alt=""
+            width="687"
+            height="340"
+            aria-hidden="true"
+            loading="lazy"
+            class="ramo ramo-arriba select-none"
+        />
+
+        <p class="frase-dedicatoria">{frase}</p>
+
+        <!-- El envoltorio es el que anima GSAP; la imagen de adentro
+             va dada vuelta, así los dos transform no se pisan -->
+        <div class="ramo-abajo">
+            <img
+                src="/imagenes/florseparador.webp"
+                alt=""
+                width="687"
+                height="340"
+                aria-hidden="true"
+                loading="lazy"
+                class="ramo ramo-volteado select-none"
+            />
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Todo se mide contra el ancho del bloque (cqw) */
+    .bloque-dedicatoria {
+        width: min(100%, 390px);
+        container-type: inline-size;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .ramo {
+        width: 72cqw;
+        height: auto;
+        filter: drop-shadow(0 6px 10px rgba(150, 80, 70, 0.18));
+    }
+
+    /* El de abajo es el mismo ramo, dado vuelta */
+    .ramo-volteado {
+        display: block;
+        transform: scaleY(-1);
+        filter: drop-shadow(0 -6px 10px rgba(150, 80, 70, 0.18));
+    }
+
+    /* Oro rosado liso, sin degradé (igual que portada y nombres) */
+    .frase-dedicatoria {
+        font-family: "Charm", cursive;
+        font-weight: 400;
+        /* Equivale a text-xl de Tailwind */
+        font-size: 1.25rem;
+        line-height: 1.75;
+        color: #b76e79;
+        padding: 3cqw 4cqw;
+        text-wrap: pretty;
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const bloque = document.getElementById("bloque-dedicatoria");
+        if (!bloque) return;
+
+        const ramoArriba = bloque.querySelector(".ramo-arriba");
+        const ramoAbajo = bloque.querySelector(".ramo-abajo");
+        const frase = bloque.querySelector(".frase-dedicatoria");
+
+        /*
+           toggleActions = onEnter | onLeave | onEnterBack | onLeaveBack.
+           "restart" al entrar bajando la reproduce de cero cada vez;
+           "reset" al salir por arriba la deja escondida, lista para la
+           próxima bajada.
+        */
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: bloque,
+                start: "top 82%",
+                toggleActions: "restart none none reset",
+            },
+        });
+
+        // Los ramos se abren desde el centro, uno baja y el otro sube.
+        tl.from(ramoArriba, {
+            opacity: 0,
+            y: 20,
+            scaleX: 0.7,
+            duration: 1,
+            ease: "power2.out",
+        })
+            .from(
+                ramoAbajo,
+                {
+                    opacity: 0,
+                    y: -20,
+                    scaleX: 0.7,
+                    duration: 1,
+                    ease: "power2.out",
+                },
+                0,
+            )
+            // La frase aparece desde un desenfoque leve
+            .from(
+                frase,
+                {
+                    opacity: 0,
+                    y: 12,
+                    filter: "blur(6px)",
+                    duration: 1.3,
+                    ease: "power2.out",
+                },
+                0.45,
+            );
+    });
+</script>

@@ -1,0 +1,286 @@
+---
+// src/layouts/Layout.astro
+import "../styles/global.css";
+export interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+
+/*
+   La miniatura del link (WhatsApp, Facebook, etc.). Va en URL absoluta
+   porque las apps de mensajería no resuelven rutas relativas: sale del
+   `site` de astro.config.mjs — hay que poner ahí el dominio real.
+   Es .jpg y no .png a propósito: pesa 120 KB en vez de 561 KB, y
+   WhatsApp descarta las miniaturas pesadas sin mostrarlas.
+*/
+const miniatura = new URL('/imagenes/miniatura.jpg', Astro.site ?? Astro.url);
+const urlPagina = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+---
+
+<!doctype html>
+<html lang="es" class="m-0 p-0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="only light" />
+    <link rel="icon" type="image/png" href="/imagenes/esfera.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <!-- Miniatura al compartir el link: sólo la imagen, sin descripción -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:url" content={urlPagina} />
+    <meta property="og:image" content={miniatura} />
+    <meta property="og:image:secure_url" content={miniatura} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={miniatura} />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Great Vibes ya NO viene de Google: se carga local desde
+         /fonts/GreatVibes-Regular.ttf en global.css -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Forzar modo claro y evitar dark mode del navegador */
+      html {
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        /* "only light", en ese orden: escrito al revés el navegador lo
+           ignora y el modo oscuro le da vuelta los colores */
+        color-scheme: only light;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: hidden;
+        color-scheme: only light;
+        /* Fuera de la columna móvil (tablet / PC) */
+        background-color: #e9e4dd;
+      }
+
+      /* La invitación SIEMPRE se ve como celular: columna centrada */
+      main {
+        position: relative;
+        width: 100%;
+        max-width: 430px;
+        margin: 0 auto;
+        min-height: 100vh;
+        /* Mármol rosa con vetas doradas, fijo detrás de todas las
+           secciones: el contenido se desliza por encima. Encima del
+           mármol va un velo blanco translúcido (la primera capa) que lo
+           suaviza para que las letras se lean; subir o bajar el 0.55
+           para más o menos velo. */
+        background-image:
+          linear-gradient(rgba(255, 250, 248, 0.55), rgba(255, 250, 248, 0.55)),
+          url("/imagenes/fondotodo.webp");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-color: #f6e3dc;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Polvo mágico sobre todo el fondo: dos capas de estrellitas
+         doradas, en mosaicos de distinto tamaño y con su propio
+         titileo, para que no se vea como un patrón repetido parejo.
+         Van detrás de las secciones (el orden en el DOM las pinta
+         primero), así el contenido siempre queda encima. */
+      main::before,
+      main::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-repeat: repeat;
+      }
+
+      main::before {
+        background-image:
+          radial-gradient(2.2px 2.2px at 8% 12%, rgba(255, 240, 200, 1), transparent 100%),
+          radial-gradient(1.7px 1.7px at 32% 28%, rgba(247, 227, 174, 0.95), transparent 100%),
+          radial-gradient(2px 2px at 58% 8%, rgba(255, 240, 200, 1), transparent 100%),
+          radial-gradient(1.5px 1.5px at 78% 22%, rgba(247, 227, 174, 0.9), transparent 100%),
+          radial-gradient(2.4px 2.4px at 92% 45%, rgba(255, 240, 200, 1), transparent 100%),
+          radial-gradient(1.7px 1.7px at 15% 62%, rgba(247, 227, 174, 0.9), transparent 100%),
+          radial-gradient(2.1px 2.1px at 44% 78%, rgba(255, 240, 200, 1), transparent 100%),
+          radial-gradient(1.5px 1.5px at 68% 88%, rgba(247, 227, 174, 0.85), transparent 100%),
+          radial-gradient(2.2px 2.2px at 88% 68%, rgba(255, 240, 200, 0.95), transparent 100%),
+          radial-gradient(1.6px 1.6px at 5% 92%, rgba(247, 227, 174, 0.9), transparent 100%),
+          radial-gradient(1.8px 1.8px at 26% 45%, rgba(255, 240, 200, 0.95), transparent 100%),
+          radial-gradient(1.4px 1.4px at 52% 60%, rgba(247, 227, 174, 0.85), transparent 100%),
+          radial-gradient(2px 2px at 72% 52%, rgba(255, 240, 200, 0.95), transparent 100%),
+          radial-gradient(1.5px 1.5px at 36% 95%, rgba(247, 227, 174, 0.9), transparent 100%);
+        /* Mosaico más chico = más estrellas por pantalla */
+        background-size: 230px 230px;
+        /* Dos animaciones a la vez: el titileo (rápido) y una deriva
+           muy lenta que hace flotar el campo de estrellas. 75s es a
+           propósito: se percibe como movimiento vivo, no como que algo
+           se está desplazando. */
+        animation:
+          centelleo-fondo-uno 5.5s ease-in-out infinite,
+          deriva-fondo-uno 75s ease-in-out infinite alternate;
+      }
+
+      main::after {
+        background-image:
+          radial-gradient(1.9px 1.9px at 20% 18%, rgba(240, 208, 137, 1), transparent 100%),
+          radial-gradient(1.4px 1.4px at 48% 5%, rgba(201, 164, 92, 0.9), transparent 100%),
+          radial-gradient(2.1px 2.1px at 72% 32%, rgba(240, 208, 137, 1), transparent 100%),
+          radial-gradient(1.5px 1.5px at 12% 48%, rgba(201, 164, 92, 0.85), transparent 100%),
+          radial-gradient(2px 2px at 38% 58%, rgba(240, 208, 137, 1), transparent 100%),
+          radial-gradient(1.4px 1.4px at 82% 62%, rgba(201, 164, 92, 0.8), transparent 100%),
+          radial-gradient(2.2px 2.2px at 62% 82%, rgba(240, 208, 137, 1), transparent 100%),
+          radial-gradient(1.7px 1.7px at 95% 90%, rgba(201, 164, 92, 0.9), transparent 100%),
+          radial-gradient(1.6px 1.6px at 6% 76%, rgba(240, 208, 137, 0.95), transparent 100%),
+          radial-gradient(1.9px 1.9px at 88% 12%, rgba(240, 208, 137, 0.95), transparent 100%),
+          radial-gradient(1.4px 1.4px at 30% 88%, rgba(201, 164, 92, 0.85), transparent 100%);
+        background-size: 175px 175px;
+        background-position: 40px 60px;
+        /* La segunda capa deriva más lento y hacia otro lado: las dos
+           juntas dan sensación de profundidad, como estrellas a
+           distintas distancias. */
+        animation:
+          centelleo-fondo-dos 7s ease-in-out infinite 1.2s,
+          deriva-fondo-dos 95s ease-in-out infinite alternate;
+      }
+
+      @keyframes deriva-fondo-uno {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 55px -38px;
+        }
+      }
+
+      @keyframes deriva-fondo-dos {
+        from {
+          background-position: 40px 60px;
+        }
+        to {
+          background-position: -25px 22px;
+        }
+      }
+
+      /* Parpadeo, no pulso: baja bastante y sube a pleno, así se lee
+         como estrellas encendiéndose y apagándose. Cada capa lo hace
+         con su propio ritmo y en su propio momento, para que nunca
+         parpadeen todas a la vez. */
+      @keyframes centelleo-fondo-uno {
+        0%,
+        100% {
+          opacity: 0.2;
+        }
+        45% {
+          opacity: 1;
+        }
+        60% {
+          opacity: 0.55;
+        }
+      }
+
+      @keyframes centelleo-fondo-dos {
+        0%,
+        100% {
+          opacity: 0.9;
+        }
+        35% {
+          opacity: 0.15;
+        }
+        70% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes centelleo-fondo-tres {
+        0%,
+        100% {
+          opacity: 0.6;
+        }
+        25% {
+          opacity: 0.12;
+        }
+        55% {
+          opacity: 1;
+        }
+        80% {
+          opacity: 0.3;
+        }
+      }
+
+      @keyframes deriva-fondo-tres {
+        from {
+          background-position: 90px 20px;
+        }
+        to {
+          background-position: 20px -55px;
+        }
+      }
+
+      /* Tercera capa de estrellas: va en su propio div porque main ya
+         gastó sus dos pseudo-elementos. Sumar una tercera tanda con
+         otro ritmo es lo que hace que el parpadeo se vea por estrella
+         y no como un fundido de todo el fondo. */
+      .estrellas-extra {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-repeat: repeat;
+        background-image:
+          radial-gradient(2.3px 2.3px at 14% 30%, rgba(255, 245, 214, 1), transparent 100%),
+          radial-gradient(1.6px 1.6px at 40% 14%, rgba(240, 208, 137, 0.95), transparent 100%),
+          radial-gradient(2px 2px at 66% 40%, rgba(255, 245, 214, 1), transparent 100%),
+          radial-gradient(1.5px 1.5px at 90% 26%, rgba(240, 208, 137, 0.9), transparent 100%),
+          radial-gradient(2.2px 2.2px at 22% 70%, rgba(255, 245, 214, 1), transparent 100%),
+          radial-gradient(1.6px 1.6px at 54% 92%, rgba(240, 208, 137, 0.95), transparent 100%),
+          radial-gradient(1.9px 1.9px at 80% 74%, rgba(255, 245, 214, 0.95), transparent 100%);
+        background-size: 300px 300px;
+        background-position: 90px 20px;
+        animation:
+          centelleo-fondo-tres 4.3s ease-in-out infinite 0.6s,
+          deriva-fondo-tres 110s ease-in-out infinite alternate;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        main::before,
+        main::after,
+        .estrellas-extra {
+          animation: none;
+          opacity: 0.7;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen m-0 p-0">
+    <main class="m-0 p-0 overflow-x-hidden">
+      <!-- Tercera tanda de estrellas: va antes del contenido para que
+           quede pintada por detrás de todas las secciones -->
+      <div class="estrellas-extra" aria-hidden="true"></div>
+
+      <slot />
+    </main>
+  </body>
+</html>

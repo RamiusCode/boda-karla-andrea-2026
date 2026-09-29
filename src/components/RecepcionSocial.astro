@@ -1,0 +1,458 @@
+---
+// src/components/RecepcionSocial.astro
+// Recepción social en rosa gold: ramo arriba, título en Great Vibes,
+// salón y dirección en Charm, la hora en cápsula y el botón al mapa.
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Recepción Social";
+const hora = "19:00";
+const salon = ["Salón de Eventos", "Huicho"];
+const direccion = [
+    "Calle 1 Este, Pampa de la Cruz",
+    "Villa Primero de Mayo",
+    "Santa Cruz de la Sierra",
+];
+const mapa = "https://maps.app.goo.gl/2JYmKkHHKhfWEeRZ6";
+const textoBoton = "Ver ubicación";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="recepcion-social" class="relative w-full overflow-hidden">
+    <!--
+       Mariposas volando a los costados, mirando al centro. El span lleva
+       el recorrido y la imagen de adentro el aleteo, así las dos
+       animaciones no se pisan sobre el mismo transform.
+    -->
+    {
+        [3, 4].map((n) => (
+            <span class={`mariposa mariposa-${n}`} aria-hidden="true">
+                <img
+                    src="/imagenes/mariposa.webp"
+                    alt=""
+                    width="360"
+                    height="240"
+                    loading="lazy"
+                    class="mariposa-alas select-none"
+                />
+            </span>
+        ))
+    }
+
+    <!-- Brillos sueltos en oro rosado -->
+    <span class="chispa chispa-1" aria-hidden="true"></span>
+    <span class="chispa chispa-2" aria-hidden="true"></span>
+    <span class="chispa chispa-3" aria-hidden="true"></span>
+
+    <div
+        id="bloque-recepcion"
+        class="relative flex flex-col items-center px-7 py-12 text-center"
+    >
+        <img
+            src="/imagenes/florseparador.webp"
+            alt=""
+            width="687"
+            height="340"
+            aria-hidden="true"
+            loading="lazy"
+            class="ramo-recepcion select-none"
+        />
+
+        <h2 class="font-great-vibes titulo-recepcion">{titulo}</h2>
+
+        <!--
+           El arco, con un ramo a cada lado a su misma altura. La fila
+           llega de borde a borde (anula el px-7) para que los ramos
+           asomen desde el filo de la pantalla.
+        -->
+        <div class="fila-icono">
+                <img
+                    src="/imagenes/lateral.webp"
+                    alt=""
+                    width="222"
+                    height="680"
+                    aria-hidden="true"
+                    loading="lazy"
+                    class="lateral-recepcion flor-izq select-none"
+                />
+
+            <!-- El arco es un ícono de línea negra: se pinta en rosa gold
+                 con máscara -->
+            <span
+                class="icono-recepcion"
+                style="--ic: url('/imagenes/recepcion.png')"
+                aria-hidden="true"></span>
+
+                <img
+                    src="/imagenes/lateral.webp"
+                    alt=""
+                    width="222"
+                    height="680"
+                    aria-hidden="true"
+                    loading="lazy"
+                    class="lateral-recepcion flor-der select-none"
+                />
+        </div>
+
+        <img
+            src="/imagenes/separador.png"
+            alt=""
+            width="1920"
+            height="198"
+            aria-hidden="true"
+            loading="lazy"
+            class="separador-recepcion select-none"
+        />
+
+        <h3 class="nombre-salon">
+            {salon.map((linea) => <span class="block">{linea}</span>)}
+        </h3>
+
+        <p class="direccion-salon">
+            {direccion.map((linea) => <span class="block">{linea}</span>)}
+        </p>
+
+        <p class="hora-recepcion">
+            <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                aria-hidden="true"
+            >
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 2"></path>
+            </svg>
+            <span>{hora} hrs.</span>
+        </p>
+
+        <a href={mapa} target="_blank" rel="noopener noreferrer" class="boton-mapa">
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="pin-mapa">
+                <path
+                    d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"
+                    fill="currentColor"></path>
+            </svg>
+            <span>{textoBoton}</span>
+        </a>
+    </div>
+</section>
+
+<style>
+    /* Los cqw de abajo se miden contra el ancho del bloque */
+    #bloque-recepcion {
+        container-type: inline-size;
+        max-width: 430px;
+        margin: 0 auto;
+    }
+
+    .ramo-recepcion {
+        width: 62cqw;
+        height: auto;
+        filter: drop-shadow(0 6px 10px rgba(150, 80, 70, 0.18));
+    }
+
+    /* Great Vibes: sin mayúsculas forzadas ni espaciado */
+    .titulo-recepcion {
+        color: #c0905a;
+        font-size: min(13cqw, 3.2rem);
+        line-height: 1.25;
+        margin-top: 1cqw;
+    }
+
+    .icono-recepcion {
+        display: block;
+        width: min(26cqw, 110px);
+        aspect-ratio: 1 / 1;
+        margin-top: 2cqw;
+        background-color: #c07c86;
+        -webkit-mask: var(--ic) center / contain no-repeat;
+        mask: var(--ic) center / contain no-repeat;
+    }
+
+    .fila-icono {
+        position: relative;
+        align-self: stretch;
+        margin-inline: -1.75rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Ramos a los costados del arco, centrados a su altura. translate /
+       scale sueltos: la animación de entrada usa transform sin pisarlos. */
+    .lateral-recepcion {
+        position: absolute;
+        top: 50%;
+        width: min(13%, 56px);
+        height: auto;
+        translate: 0 -50%;
+        pointer-events: none;
+        filter: drop-shadow(0 4px 8px rgba(150, 80, 70, 0.18));
+    }
+
+    .flor-izq {
+        left: 0;
+    }
+
+    .flor-der {
+        right: 0;
+        scale: -1 1;
+    }
+
+    .separador-recepcion {
+        width: 62cqw;
+        height: auto;
+        margin-top: 1cqw;
+    }
+
+    .nombre-salon {
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        color: #b76e79;
+        font-size: min(7cqw, 1.7rem);
+        line-height: 1.3;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-top: 4cqw;
+    }
+
+    .direccion-salon {
+        font-family: "Charm", cursive;
+        color: #9a6a5e;
+        font-size: min(5.4cqw, 1.3rem);
+        line-height: 1.6;
+        margin-top: 2.5cqw;
+    }
+
+    .hora-recepcion {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45em;
+        margin-top: 5cqw;
+        padding: 0.35em 1.2em;
+        border: 1px solid rgba(183, 110, 121, 0.5);
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.6);
+        font-family: "Charm", cursive;
+        font-size: min(5.4cqw, 1.3rem);
+        color: #b76e79;
+    }
+
+    /* Botón lleno en rosa gold, con un brillo que lo cruza cada tanto */
+    .boton-mapa {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+        margin-top: 6cqw;
+        padding: 0.7em 1.8em;
+        border-radius: 9999px;
+        overflow: hidden;
+        background: #b76e79;
+        color: #fff;
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 700;
+        font-size: min(4.8cqw, 1.1rem);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        box-shadow:
+            0 8px 18px rgba(183, 110, 121, 0.35),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+        transition: transform 0.3s ease;
+    }
+
+    .boton-mapa:hover {
+        transform: scale(1.04);
+    }
+
+    .boton-mapa::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -60%;
+        width: 40%;
+        background: linear-gradient(
+            100deg,
+            transparent,
+            rgba(255, 255, 255, 0.45),
+            transparent
+        );
+        animation: brillo-boton 3.2s ease-in-out infinite;
+    }
+
+    @keyframes brillo-boton {
+        0%,
+        60% {
+            left: -60%;
+        }
+        100% {
+            left: 130%;
+        }
+    }
+
+    .pin-mapa {
+        width: 1.2em;
+        height: 1.2em;
+        flex: none;
+    }
+
+    /* ── Chispas ────────────────────────────────────────────── */
+    .chispa {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 9999px;
+        background: #f3c9b8;
+        box-shadow: 0 0 6px 1px rgba(214, 150, 125, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        animation: brillo 4.2s ease-in-out infinite;
+    }
+
+    .chispa-1 {
+        left: 10%;
+        top: 20%;
+        animation-delay: 0.3s;
+    }
+    .chispa-2 {
+        right: 9%;
+        top: 38%;
+        animation-delay: 1.7s;
+    }
+    .chispa-3 {
+        left: 14%;
+        bottom: 22%;
+        animation-delay: 3s;
+    }
+
+    @keyframes brillo {
+        0%,
+        100% {
+            opacity: 0;
+            transform: scale(0.6);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* ── Mariposas ──────────────────────────────────────────── */
+    /* Cada una con su lugar, tamaño y recorrido (--dx, --dy). Las de la
+       izquierda giran a la derecha y al revés: todas miran al centro. */
+    .mariposa {
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        animation: vuelo var(--t, 9s) ease-in-out infinite;
+        animation-delay: var(--d, 0s);
+    }
+
+    .mariposa-alas {
+        display: block;
+        width: 100%;
+        height: auto;
+        transform: rotate(var(--r, 0deg));
+        filter: drop-shadow(0 4px 6px rgba(150, 80, 70, 0.25));
+        animation: aleteo var(--a, 0.35s) ease-in-out infinite alternate;
+    }
+
+    .mariposa-3 {
+        left: 9%;
+        top: 70%;
+        width: min(9vw, 40px);
+        --dx: 16px;
+        --dy: 20px;
+        --r: 32deg;
+        --t: 8s;
+        --d: -5s;
+        --a: 0.28s;
+    }
+    /* Espejo de la mariposa-3: mismo tamaño y misma altura */
+    .mariposa-4 {
+        right: 9%;
+        top: 70%;
+        width: min(9vw, 40px);
+        --dx: -16px;
+        --dy: 20px;
+        --r: -32deg;
+        --t: 8.5s;
+        --d: -2s;
+        --a: 0.3s;
+    }
+
+    /* Recorrido: sube, se ladea y vuelve, con un vaivén suave */
+    @keyframes vuelo {
+        0%,
+        100% {
+            transform: translate(0, 0);
+        }
+        25% {
+            transform: translate(var(--dx), calc(var(--dy) * -1));
+        }
+        50% {
+            transform: translate(calc(var(--dx) * 0.3), calc(var(--dy) * -1.7));
+        }
+        75% {
+            transform: translate(calc(var(--dx) * -0.6), calc(var(--dy) * -0.7));
+        }
+    }
+
+    /* Aleteo: las alas se cierran y se abren */
+    @keyframes aleteo {
+        from {
+            transform: rotate(var(--r, 0deg)) scaleX(1);
+        }
+        to {
+            transform: rotate(var(--r, 0deg)) scaleX(0.35);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .chispa,
+        .boton-mapa::after,
+        .mariposa,
+        .mariposa-alas {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    import { animarEntrada } from "../scripts/animaciones";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const bloque = document.getElementById("bloque-recepcion");
+        if (!bloque) return;
+        animarEntrada(bloque.children, bloque, { stagger: 0.12 });
+
+        // Las mariposas aparecen de a una. Solo opacidad: el transform
+        // ya lo usa el vuelo en CSS.
+        const mariposas = document.querySelectorAll("#recepcion-social .mariposa");
+        if (mariposas.length) {
+            gsap.from(mariposas, {
+                opacity: 0,
+                duration: 1,
+                stagger: 0.25,
+                delay: 0.6,
+                ease: "power1.out",
+                scrollTrigger: {
+                    trigger: bloque,
+                    start: "top 85%",
+                    toggleActions: "restart none none reset",
+                },
+            });
+        }
+
+        // Los ramos del arco entran cada uno desde su costado
+        const izq = document.querySelector("#recepcion-social .flor-izq");
+        const der = document.querySelector("#recepcion-social .flor-der");
+        if (izq) animarEntrada(izq, bloque, { x: -30, y: 0 });
+        if (der) animarEntrada(der, bloque, { x: 30, y: 0 });
+    });
+</script>

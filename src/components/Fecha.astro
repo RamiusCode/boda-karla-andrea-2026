@@ -1,0 +1,491 @@
+---
+// src/components/Fecha.astro
+// La fecha de los XV, suelta sobre el fondo del layout:
+//   carruage.webp → el carruaje, que llega desde la derecha
+//   el anuncio    → Great Vibes dorado, entre dos mariposas
+//   la fila       → día · número · mes, con filetes arriba y abajo
+//   el año y la hora debajo
+//
+// El calendario y el contador NO se llaman desde acá: van sueltos en
+// Invitacion.astro, justo debajo de <Fecha />.
+//
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const anuncio = ["Acompáñanos en este día", "tan especial"];
+const anio = 2026;
+const mes = 10; // 1 = enero … 10 = octubre
+const dia = 17; // sábado 17 de octubre
+const hora = "19:00";
+// ──────────────────────────────────────────────────────────────
+
+const NOMBRES_DIA = [
+    "Domingo",
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado",
+];
+const NOMBRES_MES = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+];
+
+const fechaXV = new Date(anio, mes - 1, dia);
+const diaSemana = NOMBRES_DIA[fechaXV.getDay()];
+const nombreMes = NOMBRES_MES[mes - 1];
+---
+
+<section
+    id="fecha-boda"
+    class="relative w-full overflow-hidden flex justify-center px-5 pt-2 pb-10 text-center"
+>
+    <div id="bloque-fecha" class="bloque-fecha">
+        <!-- Brillos sueltos alrededor del carruaje -->
+        <span class="chispa chispa-1" aria-hidden="true"></span>
+        <span class="chispa chispa-2" aria-hidden="true"></span>
+        <span class="chispa chispa-3" aria-hidden="true"></span>
+
+        <!-- El carruaje: el span entra (GSAP), la imagen se mece (CSS) -->
+        <span class="carruaje-entrada">
+            <img
+                src="/imagenes/carruage.webp"
+                alt=""
+                width="800"
+                height="267"
+                aria-hidden="true"
+                loading="lazy"
+                class="carruaje select-none"
+            />
+        </span>
+
+        <!-- Anuncio entre dos mariposas que miran al centro -->
+        <div class="fila-anuncio">
+            <span class="mariposa mariposa-izq" aria-hidden="true">
+                <img
+                    src="/imagenes/mariposa.webp"
+                    alt=""
+                    width="360"
+                    height="240"
+                    loading="lazy"
+                    class="mariposa-alas select-none"
+                />
+            </span>
+
+            <p class="anuncio-fecha font-great-vibes">
+                {anuncio.map((linea) => <span class="block">{linea}</span>)}
+            </p>
+
+            <span class="mariposa mariposa-der" aria-hidden="true">
+                <img
+                    src="/imagenes/mariposa.webp"
+                    alt=""
+                    width="360"
+                    height="240"
+                    loading="lazy"
+                    class="mariposa-alas select-none"
+                />
+            </span>
+        </div>
+
+        <img
+            src="/imagenes/separador.png"
+            alt=""
+            width="1920"
+            height="198"
+            aria-hidden="true"
+            loading="lazy"
+            class="separador-fecha select-none"
+        />
+
+        <!-- Día · número · mes -->
+        <div class="fila-fecha">
+            <div class="columna-fecha">
+                <span class="linea-fecha" aria-hidden="true"></span>
+                <p class="texto-columna">{diaSemana}</p>
+                <span class="linea-fecha" aria-hidden="true"></span>
+            </div>
+
+            <p class="numero-fecha">{dia}</p>
+
+            <div class="columna-fecha">
+                <span class="linea-fecha" aria-hidden="true"></span>
+                <p class="texto-columna">{nombreMes}</p>
+                <span class="linea-fecha" aria-hidden="true"></span>
+            </div>
+        </div>
+
+        <p class="anio-fecha">{anio}</p>
+
+        <!-- La hora, en una cápsula fina -->
+        <p class="hora-fecha">
+            <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                aria-hidden="true"
+            >
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 2"></path>
+            </svg>
+            <span>{hora} hrs.</span>
+        </p>
+    </div>
+</section>
+
+<style>
+    /* Todo se mide contra el ancho del bloque (cqw) */
+    .bloque-fecha {
+        position: relative;
+        width: min(100%, 390px);
+        container-type: inline-size;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* ── Carruaje ───────────────────────────────────────────── */
+    .carruaje-entrada {
+        display: block;
+        width: 62cqw;
+    }
+
+    .carruaje {
+        display: block;
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0 8px 12px rgba(150, 80, 70, 0.2));
+        animation: mecer 2.4s ease-in-out infinite;
+        transform-origin: 70% 90%;
+    }
+
+    /* Traqueteo suave, como si rodara */
+    @keyframes mecer {
+        0%,
+        100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-2px) rotate(-0.6deg);
+        }
+    }
+
+    /* ── Anuncio ────────────────────────────────────────────── */
+    .fila-anuncio {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2cqw;
+        margin-top: 9cqw;
+        width: 100%;
+    }
+
+    /* Great Vibes: sin mayúsculas forzadas ni espaciado */
+    .anuncio-fecha {
+        color: #c0905a;
+        font-size: min(9.4cqw, 2.35rem);
+        line-height: 1.25;
+        text-wrap: balance;
+    }
+
+    .mariposa {
+        flex: none;
+        width: 9cqw;
+        animation: flotar 3.2s ease-in-out infinite;
+    }
+
+    .mariposa-der {
+        animation-delay: -1.6s;
+    }
+
+    .mariposa-alas {
+        display: block;
+        width: 100%;
+        height: auto;
+        transform: rotate(var(--r));
+        filter: drop-shadow(0 3px 5px rgba(150, 80, 70, 0.25));
+        animation: aleteo 0.34s ease-in-out infinite alternate;
+    }
+
+    /* Las dos miran hacia el anuncio */
+    .mariposa-izq .mariposa-alas {
+        --r: 35deg;
+    }
+    .mariposa-der .mariposa-alas {
+        --r: -35deg;
+        animation-duration: 0.38s;
+    }
+
+    @keyframes flotar {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-7px);
+        }
+    }
+
+    @keyframes aleteo {
+        from {
+            transform: rotate(var(--r)) scaleX(1);
+        }
+        to {
+            transform: rotate(var(--r)) scaleX(0.35);
+        }
+    }
+
+    /* ── Día · número · mes ─────────────────────────────────── */
+    .fila-fecha {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 4cqw;
+        width: 100%;
+        margin-top: 2cqw;
+    }
+
+    .columna-fecha {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2cqw;
+    }
+
+    /* Filete que se apaga hacia afuera, con un punto al medio */
+    .linea-fecha {
+        position: relative;
+        display: block;
+        height: 1px;
+        background: #c9978a;
+    }
+
+    .columna-fecha:first-child .linea-fecha {
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 40%);
+        mask-image: linear-gradient(90deg, transparent, #000 40%);
+    }
+
+    .columna-fecha:last-child .linea-fecha {
+        -webkit-mask-image: linear-gradient(90deg, #000 60%, transparent);
+        mask-image: linear-gradient(90deg, #000 60%, transparent);
+    }
+
+    /* Día y mes en Charm, la letra de los nombres de los padres */
+    .texto-columna {
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        font-size: min(5.6cqw, 1.4rem);
+        line-height: 1.3;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #b76e79;
+    }
+
+    /* El número en la misma Charm que el día y el mes */
+    .numero-fecha {
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        font-size: min(22cqw, 5.4rem);
+        line-height: 1.1;
+        color: #b76e79;
+        text-shadow: 0 2px 4px rgba(120, 60, 60, 0.12);
+    }
+
+    .anio-fecha {
+        font-family: "Charm", cursive;
+        font-weight: 700;
+        font-size: min(7.4cqw, 1.8rem);
+        letter-spacing: 0.12em;
+        text-indent: 0.12em;
+        color: #c0905a;
+        margin-top: 1cqw;
+    }
+
+    /* Rombito en la punta de adentro de cada filete, junto al número */
+    .linea-fecha::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 5px;
+        height: 5px;
+        margin-top: -2.5px;
+        transform: rotate(45deg);
+        background: #f2c3c8;
+        border: 1px solid #b76e79;
+    }
+
+    .columna-fecha:first-child .linea-fecha::after {
+        right: 0;
+    }
+
+    .columna-fecha:last-child .linea-fecha::after {
+        left: 0;
+    }
+
+    /* Filete con corazón entre el anuncio y la fecha */
+    .separador-fecha {
+        width: 62cqw;
+        height: auto;
+        margin-top: 3cqw;
+    }
+
+    .hora-fecha {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45em;
+        margin-top: 4cqw;
+        padding: 0.35em 1.2em;
+        border: 1px solid rgba(183, 110, 121, 0.5);
+        border-radius: 9999px;
+        font-family: "Charm", cursive;
+        font-size: min(5.2cqw, 1.25rem);
+        color: #b76e79;
+    }
+
+    /* ── Chispas ────────────────────────────────────────────── */
+    .chispa {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 9999px;
+        background: #f3c9b8;
+        box-shadow: 0 0 6px 1px rgba(214, 150, 125, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        animation: brillo 4.2s ease-in-out infinite;
+    }
+
+    .chispa-1 {
+        left: 12%;
+        top: 4%;
+        animation-delay: 0.3s;
+    }
+    .chispa-2 {
+        right: 8%;
+        top: 12%;
+        animation-delay: 1.6s;
+    }
+    .chispa-3 {
+        left: 50%;
+        top: 2%;
+        animation-delay: 2.8s;
+    }
+
+    @keyframes brillo {
+        0%,
+        100% {
+            opacity: 0;
+            transform: scale(0.6);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .carruaje,
+        .mariposa,
+        .mariposa-alas,
+        .chispa {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const bloque = document.getElementById("bloque-fecha");
+        if (!bloque) return;
+
+        /*
+           toggleActions = onEnter | onLeave | onEnterBack | onLeaveBack.
+           "restart" al entrar bajando la reproduce de cero cada vez;
+           "reset" al salir por arriba la deja escondida, lista para la
+           próxima bajada.
+        */
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: bloque,
+                start: "top 82%",
+                toggleActions: "restart none none reset",
+            },
+        });
+
+        const q = (sel: string) => bloque.querySelectorAll(sel);
+
+        // El carruaje llega rodando desde la derecha (los caballos
+        // miran a la izquierda) y frena en el centro
+        tl.from(q(".carruaje-entrada"), {
+            opacity: 0,
+            x: 160,
+            duration: 1.6,
+            ease: "power3.out",
+        });
+
+        // El anuncio aparece desde un desenfoque leve...
+        tl.from(
+            q(".anuncio-fecha, .separador-fecha"),
+            { opacity: 0, filter: "blur(6px)", y: 10, duration: 1.1, ease: "power2.out" },
+            0.6,
+        );
+
+        // ...y las mariposas se posan a sus costados. Solo opacidad:
+        // el transform ya lo usa el flotado en CSS.
+        tl.from(q(".mariposa"), { opacity: 0, duration: 0.8, stagger: 0.2 }, 0.9);
+
+        // Los filetes se trazan desde el número hacia afuera
+        const columnas = q(".columna-fecha");
+        if (columnas.length === 2) {
+            tl.from(
+                columnas[0].querySelectorAll(".linea-fecha"),
+                { scaleX: 0, transformOrigin: "right center", duration: 1, ease: "power2.inOut" },
+                1.1,
+            );
+            tl.from(
+                columnas[1].querySelectorAll(".linea-fecha"),
+                { scaleX: 0, transformOrigin: "left center", duration: 1, ease: "power2.inOut" },
+                1.1,
+            );
+        }
+
+        // Día y mes se abren hacia sus costados
+        tl.from(
+            q(".columna-fecha .texto-columna"),
+            { opacity: 0, x: (i: number) => (i === 0 ? 16 : -16), duration: 0.9, ease: "power2.out" },
+            1.2,
+        );
+
+        // El número asienta último, creciendo apenas
+        tl.from(
+            q(".numero-fecha"),
+            { opacity: 0, scale: 0.7, duration: 1, ease: "back.out(1.6)" },
+            1.3,
+        );
+
+        tl.from(
+            q(".anio-fecha, .hora-fecha"),
+            { opacity: 0, y: 10, duration: 0.8, stagger: 0.18, ease: "power2.out" },
+            1.7,
+        );
+    });
+</script>
