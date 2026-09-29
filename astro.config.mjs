@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   // El dominio real: WhatsApp necesita la URL absoluta de la miniatura,
   // con una ruta relativa no la muestra.
-  site: 'https://mis-xv-maria-isabel-2026.vercel.app',
+  site: 'https://mis-xv-karla-andrea-2026-henna.vercel.app',
   vite: {
     plugins: [tailwindcss()]
   }

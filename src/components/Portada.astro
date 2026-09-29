@@ -3,14 +3,14 @@
 //
 // De arriba hacia abajo, igual que el diseño de referencia:
 //   principal.webp → fondo con flores; se ESTIRA al alto del celular
-//   corona.png     → tiara
+//   corona.webp    → tiara
 //   "Has recibido una invitación" → serif en oro rosado
 //   separador.png  → filete con corazón (el único)
 //   "muy especial" → Great Vibes en oro rosado
 //
 // El nombre y los XV años no van acá a propósito: los muestra
 // NombresFlores al abrir el sobre, y repetirlos se sentía redundante.
-//   sobre.png      → el sobre lacrado; es el botón que arranca la música
+//   sobre.webp     → el sobre lacrado; es el botón que arranca la música
 //                    y abre la invitación
 //   "Toca el sobre…" → cápsula blanca debajo del sobre
 //
@@ -85,10 +85,10 @@ const { invitado = "" } = Astro.props;
             <!-- Encabezado: corona · título · nombre -->
             <div id="bloque-titulo" class="flex flex-col items-center text-center">
                 <img
-                    src="/imagenes/corona.png"
+                    src="/imagenes/corona.webp"
                     alt=""
-                    width="1055"
-                    height="527"
+                    width="700"
+                    height="350"
                     aria-hidden="true"
                     class="corona select-none"
                 />
@@ -129,10 +129,10 @@ const { invitado = "" } = Astro.props;
                 class="cursor-pointer border-0 bg-transparent p-0"
             >
                 <img
-                    src="/imagenes/sobre.png"
+                    src="/imagenes/sobre.webp"
                     alt=""
-                    width="1469"
-                    height="844"
+                    width="1000"
+                    height="575"
                     class="sobre select-none"
                 />
             </button>
