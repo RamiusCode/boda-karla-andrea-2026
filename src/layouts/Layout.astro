@@ -23,7 +23,12 @@ const urlPagina = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="only light" />
-    <link rel="icon" type="image/png" href="/imagenes/icono.png" />
+    <!-- Ícono de la pestaña: la corona sobre un círculo rosado claro,
+         que achicada sola casi no se veía. 48px para Google, 192px para
+         navegadores y 180px para cuando la guardan en el iPhone. -->
+    <link rel="icon" type="image/png" sizes="48x48" href="/imagenes/icono-48.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/imagenes/icono.png" />
+    <link rel="apple-touch-icon" href="/imagenes/icono-apple.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
